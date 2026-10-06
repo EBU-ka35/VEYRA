@@ -1,0 +1,1918 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="VEYRA is a modern business operations platform for managing customers, projects, teams, analytics, and business performance.">
+    <meta name="theme-color" content="#07111f">
+    <title>VEYRA | Business Operations Platform</title>
+
+    <style>
+        /* =========================================================
+           01. DESIGN SYSTEM
+        ========================================================= */
+        :root {
+            --bg-primary: #07111f;
+            --bg-secondary: #0a1626;
+            --bg-tertiary: #0d1b2d;
+            --surface: #0f1d30;
+            --surface-hover: #13243a;
+            --border: rgba(255, 255, 255, 0.08);
+            --border-light: rgba(255, 255, 255, 0.12);
+            --text-primary: #f5f7fb;
+            --text-secondary: #a9b5c7;
+            --text-muted: #718096;
+            --accent: #5b8cff;
+            --accent-hover: #719bff;
+            --success: #35d07f;
+            --container: 1180px;
+            --radius-sm: 8px;
+            --radius-md: 12px;
+            --radius-lg: 16px;
+            --radius-xl: 24px;
+            --shadow-sm: 0 8px 24px rgba(0, 0, 0, 0.18);
+            --shadow-lg: 0 30px 80px rgba(0, 0, 0, 0.38);
+            --transition: 180ms ease;
+        }
+
+        /* =========================================================
+           02. RESET & BASE STYLES
+        ========================================================= */
+        *, *::before, *::after {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        html {
+            scroll-behavior: smooth;
+            scroll-padding-top: 90px;
+        }
+
+        body {
+            min-height: 100vh;
+            background: radial-gradient(circle at 50% -10%, rgba(91, 140, 255, 0.10), transparent 35%), var(--bg-primary);
+            color: var(--text-primary);
+            font-family: Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+            line-height: 1.6;
+            overflow-x: hidden;
+            width: 100%;
+        }
+
+        img {
+            display: block;
+            max-width: 100%;
+            height: auto;
+        }
+
+        a {
+            color: inherit;
+            text-decoration: none;
+        }
+
+        button, input, select, textarea {
+            font: inherit;
+        }
+
+        button {
+            border: 0;
+            background: none;
+            cursor: pointer;
+        }
+
+        ul {
+            list-style: none;
+        }
+
+        ::selection {
+            background: rgba(91, 140, 255, 0.35);
+            color: #ffffff;
+        }
+
+        /* =========================================================
+           03. SHARED LAYOUT UTILITIES
+        ========================================================= */
+        .container {
+            width: min(var(--container), calc(100% - 32px));
+            margin: 0 auto;
+        }
+
+        @media (min-width: 768px) {
+            .container {
+                width: min(var(--container), calc(100% - 48px));
+            }
+        }
+
+        .section {
+            padding: 80px 0;
+        }
+
+        @media (min-width: 768px) {
+            .section {
+                padding: 120px 0;
+            }
+        }
+
+        .section-header {
+            max-width: 720px;
+            margin: 0 auto 40px;
+            text-align: center;
+            padding: 0 16px;
+        }
+
+        @media (min-width: 768px) {
+            .section-header {
+                margin: 0 auto 60px;
+                padding: 0;
+            }
+        }
+
+        .eyebrow {
+            display: inline-flex;
+            align-items: center;
+            color: var(--accent-hover);
+            font-size: 11px;
+            font-weight: 800;
+            letter-spacing: 0.14em;
+            text-transform: uppercase;
+        }
+
+        .section-header h2 {
+            margin-top: 14px;
+            font-size: clamp(28px, 4vw, 52px);
+            line-height: 1.15;
+            letter-spacing: -0.045em;
+        }
+
+        .section-header p {
+            margin-top: 18px;
+            color: var(--text-secondary);
+            font-size: 15px;
+            line-height: 1.8;
+        }
+
+        .btn {
+            min-height: 48px;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            padding: 0 24px;
+            border-radius: 10px;
+            font-size: 14px;
+            font-weight: 700;
+            transition: transform var(--transition), background var(--transition), border-color var(--transition), box-shadow var(--transition);
+            touch-action: manipulation;
+        }
+
+        .btn:hover {
+            transform: translateY(-2px);
+        }
+
+        .btn-primary {
+            color: #ffffff;
+            background: linear-gradient(135deg, #5b8cff, #4778ea);
+            box-shadow: 0 12px 28px rgba(91, 140, 255, 0.20);
+        }
+
+        .btn-primary:hover {
+            background: linear-gradient(135deg, #6b98ff, #527ff0);
+            box-shadow: 0 16px 36px rgba(91, 140, 255, 0.28);
+        }
+
+        .btn-secondary {
+            color: var(--text-primary);
+            background: rgba(255, 255, 255, 0.035);
+            border: 1px solid var(--border-light);
+        }
+
+        .btn-secondary:hover {
+            background: rgba(255, 255, 255, 0.07);
+        }
+
+        .btn-large {
+            min-height: 52px;
+            padding: 0 28px;
+        }
+
+        /* =========================================================
+           04. HEADER & RESPONSIVE NAVIGATION
+        ========================================================= */
+        .site-header {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            z-index: 1000;
+            background: rgba(7, 17, 31, 0.85);
+            border-bottom: 1px solid transparent;
+            backdrop-filter: blur(18px);
+            -webkit-backdrop-filter: blur(18px);
+            transition: background var(--transition), border-color var(--transition);
+        }
+
+        .site-header.scrolled {
+            background: rgba(7, 17, 31, 0.95);
+            border-color: var(--border);
+        }
+
+        .navbar {
+            width: min(var(--container), calc(100% - 32px));
+            height: 72px;
+            margin: 0 auto;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 20px;
+        }
+
+        @media (min-width: 768px) {
+            .navbar {
+                width: min(var(--container), calc(100% - 48px));
+                height: 76px;
+            }
+        }
+
+        .logo {
+            display: inline-flex;
+            align-items: center;
+            gap: 10px;
+            flex-shrink: 0;
+            font-size: 19px;
+            font-weight: 850;
+            letter-spacing: 0.15em;
+        }
+
+        .logo-mark {
+            width: 32px;
+            height: 32px;
+            display: grid;
+            place-items: center;
+            border-radius: 9px;
+            background: linear-gradient(135deg, #5b8cff, #7fa3ff);
+            color: white;
+            font-size: 13px;
+            font-weight: 900;
+            box-shadow: 0 8px 24px rgba(91, 140, 255, 0.25);
+        }
+
+        .nav-links {
+            display: none;
+        }
+
+        @media (min-width: 951px) {
+            .nav-links {
+                display: flex;
+                align-items: center;
+                gap: 28px;
+                margin-left: auto;
+            }
+            .nav-links a {
+                color: var(--text-secondary);
+                font-size: 13px;
+                font-weight: 600;
+                transition: color var(--transition);
+                padding: 6px 2px;
+            }
+            .nav-links a:hover {
+                color: #ffffff;
+            }
+        }
+
+        .nav-actions {
+            display: none;
+        }
+
+        @media (min-width: 951px) {
+            .nav-actions {
+                display: flex;
+                align-items: center;
+                gap: 16px;
+            }
+            .login-link {
+                color: var(--text-secondary);
+                font-size: 13px;
+                font-weight: 700;
+                transition: color var(--transition);
+                padding: 6px 10px;
+            }
+            .login-link:hover {
+                color: #ffffff;
+            }
+        }
+
+        .mobile-menu-button {
+            display: flex;
+            width: 44px;
+            height: 44px;
+            align-items: center;
+            justify-content: center;
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid var(--border-light);
+            border-radius: 10px;
+            color: #ffffff;
+            font-size: 22px;
+            cursor: pointer;
+            z-index: 1002;
+        }
+
+        @media (min-width: 951px) {
+            .mobile-menu-button {
+                display: none;
+            }
+        }
+
+        /* Mobile Drawer */
+        .mobile-drawer-overlay {
+            position: fixed;
+            inset: 0;
+            background: rgba(0, 0, 0, 0.6);
+            backdrop-filter: blur(4px);
+            z-index: 1000;
+            opacity: 0;
+            visibility: hidden;
+            transition: opacity 0.25s ease, visibility 0.25s ease;
+        }
+
+        .mobile-drawer-overlay.active {
+            opacity: 1;
+            visibility: visible;
+        }
+
+        .mobile-drawer {
+            position: fixed;
+            top: 0;
+            right: -100%;
+            width: 85%;
+            max-width: 380px;
+            height: 100%;
+            background: var(--bg-secondary);
+            border-left: 1px solid var(--border);
+            z-index: 1001;
+            display: flex;
+            flex-direction: column;
+            padding: 24px;
+            transition: right 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+            box-shadow: var(--shadow-lg);
+            overflow-y: auto;
+        }
+
+        .mobile-drawer.active {
+            right: 0;
+        }
+
+        .mobile-drawer-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding-bottom: 20px;
+            border-bottom: 1px solid var(--border);
+            margin-bottom: 20px;
+        }
+
+        .mobile-drawer-close {
+            width: 40px;
+            height: 40px;
+            display: grid;
+            place-items: center;
+            background: rgba(255, 255, 255, 0.05);
+            border-radius: 8px;
+            color: var(--text-secondary);
+            font-size: 20px;
+        }
+
+        .mobile-drawer-links {
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+            flex: 1;
+        }
+
+        .mobile-drawer-links a {
+            padding: 14px 16px;
+            color: var(--text-primary);
+            font-size: 16px;
+            font-weight: 600;
+            border-radius: 10px;
+            background: rgba(255, 255, 255, 0.02);
+            border: 1px solid var(--border);
+        }
+
+        .mobile-drawer-links a:active {
+            background: rgba(91, 140, 255, 0.15);
+        }
+
+        .mobile-drawer-actions {
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+            padding-top: 20px;
+            border-top: 1px solid var(--border);
+            margin-top: 20px;
+        }
+
+        .mobile-drawer-actions .btn {
+            width: 100%;
+        }
+
+        /* =========================================================
+           05. HERO SECTION
+        ========================================================= */
+        .hero {
+            position: relative;
+            padding: 130px 0 70px;
+            width: min(var(--container), calc(100% - 32px));
+            margin: 0 auto;
+            display: flex;
+            flex-direction: column;
+            gap: 50px;
+        }
+
+        @media (min-width: 951px) {
+            .hero {
+                min-height: 900px;
+                padding: 170px 0 100px;
+                width: min(var(--container), calc(100% - 48px));
+                display: grid;
+                grid-template-columns: minmax(0, 0.9fr) minmax(0, 1.1fr);
+                align-items: center;
+                gap: 70px;
+            }
+        }
+
+        .hero::before {
+            content: "";
+            position: absolute;
+            top: 100px;
+            left: 15%;
+            width: 300px;
+            height: 300px;
+            background: rgba(91, 140, 255, 0.08);
+            border-radius: 50%;
+            filter: blur(80px);
+            pointer-events: none;
+        }
+
+        @media (min-width: 768px) {
+            .hero::before {
+                width: 420px;
+                height: 420px;
+                filter: blur(100px);
+            }
+        }
+
+        .hero-content {
+            position: relative;
+            z-index: 1;
+            text-align: center;
+        }
+
+        @media (min-width: 951px) {
+            .hero-content {
+                text-align: left;
+            }
+        }
+
+        .hero-badge {
+            display: inline-flex;
+            align-items: center;
+            padding: 7px 12px;
+            border: 1px solid rgba(91, 140, 255, 0.20);
+            border-radius: 999px;
+            background: rgba(91, 140, 255, 0.08);
+            color: var(--accent-hover);
+            font-size: 11px;
+            font-weight: 800;
+            letter-spacing: 0.13em;
+            text-transform: uppercase;
+        }
+
+        .hero h1 {
+            margin-top: 20px;
+            font-size: clamp(38px, 6vw, 76px);
+            line-height: 1.05;
+            letter-spacing: -0.05em;
+            font-weight: 850;
+        }
+
+        .hero h1 span {
+            display: block;
+            background: linear-gradient(135deg, #ffffff 25%, #7197ff 70%, #a3bbff);
+            -webkit-background-clip: text;
+            background-clip: text;
+            color: transparent;
+        }
+
+        .hero-description {
+            max-width: 590px;
+            margin: 20px auto 0;
+            color: var(--text-secondary);
+            font-size: 16px;
+            line-height: 1.8;
+        }
+
+        @media (min-width: 951px) {
+            .hero-description {
+                margin: 28px 0 0;
+            }
+        }
+
+        .hero-actions {
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+            margin-top: 30px;
+        }
+
+        @media (min-width: 500px) {
+            .hero-actions {
+                flex-direction: row;
+                justify-content: center;
+            }
+        }
+
+        @media (min-width: 951px) {
+            .hero-actions {
+                justify-content: flex-start;
+            }
+        }
+
+        .hero-actions .btn {
+            width: 100%;
+        }
+
+        @media (min-width: 500px) {
+            .hero-actions .btn {
+                width: auto;
+            }
+        }
+
+        .hero-note {
+            margin-top: 16px;
+            color: var(--text-muted);
+            font-size: 12px;
+        }
+
+        /* =========================================================
+           06. HERO PRODUCT PREVIEW
+        ========================================================= */
+        .product-preview {
+            position: relative;
+            z-index: 1;
+            padding: 12px;
+            background: linear-gradient(145deg, #132236, #0b1422);
+            border: 1px solid var(--border-light);
+            border-radius: 18px;
+            box-shadow: var(--shadow-lg);
+            width: 100%;
+            overflow: hidden;
+        }
+
+        @media (min-width: 768px) {
+            .product-preview {
+                padding: 16px;
+                border-radius: 22px;
+            }
+        }
+
+        .product-window {
+            overflow: hidden;
+            background: #09121f;
+            border: 1px solid var(--border);
+            border-radius: 14px;
+        }
+
+        .window-bar {
+            height: 42px;
+            display: flex;
+            align-items: center;
+            padding: 0 12px;
+            border-bottom: 1px solid var(--border);
+            background: rgba(255, 255, 255, 0.02);
+        }
+
+        .window-dots {
+            display: flex;
+            gap: 6px;
+        }
+
+        .window-dots span {
+            width: 7px;
+            height: 7px;
+            border-radius: 50%;
+            background: rgba(255, 255, 255, 0.22);
+        }
+
+        .window-title {
+            margin-left: 12px;
+            color: var(--text-muted);
+            font-size: 10px;
+            font-weight: 600;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            white-space: nowrap;
+        }
+
+        .preview-body {
+            display: grid;
+            grid-template-columns: 1fr;
+        }
+
+        @media (min-width: 768px) {
+            .preview-body {
+                grid-template-columns: 155px 1fr;
+                min-height: 420px;
+            }
+        }
+
+        .preview-sidebar {
+            display: none;
+        }
+
+        @media (min-width: 768px) {
+            .preview-sidebar {
+                display: block;
+                padding: 20px 13px;
+                background: #0a1421;
+                border-right: 1px solid var(--border);
+            }
+        }
+
+        .preview-brand {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            margin-bottom: 28px;
+            color: #ffffff;
+            font-size: 11px;
+            font-weight: 800;
+            letter-spacing: 0.1em;
+        }
+
+        .preview-brand-mark {
+            width: 22px;
+            height: 22px;
+            display: grid;
+            place-items: center;
+            border-radius: 6px;
+            background: var(--accent);
+            font-size: 9px;
+        }
+
+        .preview-nav-label {
+            margin: 18px 8px 8px;
+            color: var(--text-muted);
+            font-size: 8px;
+            font-weight: 800;
+            letter-spacing: 0.12em;
+        }
+
+        .preview-nav-item {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            padding: 8px;
+            margin-bottom: 4px;
+            border-radius: 6px;
+            color: var(--text-muted);
+            font-size: 9px;
+        }
+
+        .preview-nav-item.active {
+            color: #ffffff;
+            background: rgba(91, 140, 255, 0.12);
+        }
+
+        .preview-content {
+            padding: 16px;
+        }
+
+        @media (min-width: 768px) {
+            .preview-content {
+                padding: 24px;
+            }
+        }
+
+        .preview-top {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 16px;
+        }
+
+        .preview-top h3 {
+            font-size: 14px;
+        }
+
+        @media (min-width: 768px) {
+            .preview-top h3 {
+                font-size: 16px;
+            }
+        }
+
+        .preview-top span {
+            color: var(--text-muted);
+            font-size: 9px;
+        }
+
+        .preview-stats {
+            display: grid;
+            grid-template-columns: 1fr;
+            gap: 10px;
+        }
+
+        @media (min-width: 500px) {
+            .preview-stats {
+                grid-template-columns: repeat(3, 1fr);
+            }
+        }
+
+        .preview-stat {
+            padding: 12px;
+            background: rgba(255, 255, 255, 0.025);
+            border: 1px solid var(--border);
+            border-radius: 9px;
+        }
+
+        .preview-stat-label {
+            display: block;
+            color: var(--text-muted);
+            font-size: 8px;
+            text-transform: uppercase;
+            letter-spacing: 0.08em;
+        }
+
+        .preview-stat-value {
+            display: block;
+            margin-top: 4px;
+            font-size: 15px;
+            font-weight: 800;
+        }
+
+        .preview-stat-change {
+            display: block;
+            margin-top: 2px;
+            color: var(--success);
+            font-size: 8px;
+        }
+
+        .preview-chart {
+            margin-top: 12px;
+            padding: 14px;
+            background: rgba(255, 255, 255, 0.02);
+            border: 1px solid var(--border);
+            border-radius: 10px;
+        }
+
+        .preview-chart-header {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 12px;
+            color: var(--text-secondary);
+            font-size: 9px;
+        }
+
+        .chart {
+            position: relative;
+            height: 140px;
+            overflow: hidden;
+            background: repeating-linear-gradient(to bottom, transparent 0, transparent 35px, rgba(255,255,255,0.045) 36px);
+        }
+
+        @media (min-width: 768px) {
+            .chart {
+                height: 175px;
+            }
+        }
+
+        .chart svg {
+            width: 100%;
+            height: 100%;
+        }
+
+        .chart-area {
+            fill: rgba(91, 140, 255, 0.10);
+        }
+
+        .chart-line {
+            fill: none;
+            stroke: #6d98ff;
+            stroke-width: 3;
+            stroke-linecap: round;
+            stroke-linejoin: round;
+        }
+
+        .chart-point {
+            fill: #ffffff;
+            stroke: #5b8cff;
+            stroke-width: 3;
+        }
+
+        /* =========================================================
+           07. TRUST BAR
+        ========================================================= */
+        .trust {
+            padding: 20px 0 60px;
+            text-align: center;
+        }
+
+        @media (min-width: 768px) {
+            .trust {
+                padding: 30px 0 100px;
+            }
+        }
+
+        .trust p {
+            color: var(--text-muted);
+            font-size: 11px;
+            text-transform: uppercase;
+            letter-spacing: 0.12em;
+            padding: 0 16px;
+        }
+
+        .trust-items {
+            margin-top: 20px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex-wrap: wrap;
+            gap: 16px 28px;
+            padding: 0 16px;
+        }
+
+        .trust-item {
+            color: #8793a5;
+            font-size: 11px;
+            font-weight: 700;
+            letter-spacing: 0.09em;
+            text-transform: uppercase;
+        }
+
+        /* =========================================================
+           08. FEATURES GRID
+        ========================================================= */
+        .feature-grid {
+            display: grid;
+            grid-template-columns: 1fr;
+            gap: 16px;
+        }
+
+        @media (min-width: 640px) {
+            .feature-grid {
+                grid-template-columns: repeat(2, 1fr);
+            }
+        }
+
+        @media (min-width: 1024px) {
+            .feature-grid {
+                grid-template-columns: repeat(3, 1fr);
+            }
+        }
+
+        .feature-card {
+            padding: 24px;
+            background: linear-gradient(145deg, rgba(15, 29, 48, 0.95), rgba(9, 18, 31, 0.95));
+            border: 1px solid var(--border);
+            border-radius: var(--radius-lg);
+            transition: transform var(--transition), border-color var(--transition), background var(--transition);
+        }
+
+        @media (min-width: 768px) {
+            .feature-card {
+                padding: 28px;
+            }
+        }
+
+        .feature-card:hover {
+            transform: translateY(-4px);
+            border-color: rgba(91, 140, 255, 0.25);
+            background: var(--surface-hover);
+        }
+
+        .feature-icon {
+            width: 44px;
+            height: 44px;
+            display: grid;
+            place-items: center;
+            border-radius: 11px;
+            background: rgba(91, 140, 255, 0.10);
+            border: 1px solid rgba(91, 140, 255, 0.16);
+            color: var(--accent-hover);
+            font-size: 18px;
+            font-weight: 700;
+        }
+
+        .feature-card h3 {
+            margin-top: 18px;
+            font-size: 17px;
+            letter-spacing: -0.02em;
+        }
+
+        .feature-card p {
+            margin-top: 8px;
+            color: var(--text-secondary);
+            font-size: 13px;
+            line-height: 1.7;
+        }
+
+        .feature-link {
+            display: inline-flex;
+            margin-top: 18px;
+            color: var(--accent-hover);
+            font-size: 12px;
+            font-weight: 700;
+        }
+
+        /* =========================================================
+           09. SOLUTIONS SECTION
+        ========================================================= */
+        .solutions {
+            display: grid;
+            grid-template-columns: 1fr;
+            gap: 40px;
+            align-items: center;
+        }
+
+        @media (min-width: 951px) {
+            .solutions {
+                grid-template-columns: minmax(0, 0.9fr) minmax(0, 1.1fr);
+                gap: 80px;
+            }
+        }
+
+        .solution-content h2 {
+            margin-top: 14px;
+            font-size: clamp(28px, 4vw, 50px);
+            line-height: 1.15;
+            letter-spacing: -0.045em;
+        }
+
+        .solution-content > p {
+            margin-top: 16px;
+            color: var(--text-secondary);
+            font-size: 15px;
+            line-height: 1.8;
+        }
+
+        .solution-list {
+            display: grid;
+            gap: 12px;
+            margin-top: 24px;
+        }
+
+        .solution-list li {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            color: var(--text-secondary);
+            font-size: 13px;
+        }
+
+        .solution-check {
+            width: 24px;
+            height: 24px;
+            display: grid;
+            place-items: center;
+            flex-shrink: 0;
+            border-radius: 50%;
+            background: rgba(53, 208, 127, 0.10);
+            color: var(--success);
+            font-size: 11px;
+            font-weight: 900;
+        }
+
+        .workflow-container {
+            position: relative;
+            padding: 10px;
+            background: radial-gradient(circle at center, rgba(91, 140, 255, 0.09), transparent 65%);
+        }
+
+        @media (min-width: 768px) {
+            .workflow-container {
+                padding: 35px;
+            }
+        }
+
+        .workflow-card {
+            padding: 18px;
+            background: rgba(15, 29, 48, 0.95);
+            border: 1px solid var(--border-light);
+            border-radius: var(--radius-lg);
+            box-shadow: var(--shadow-lg);
+        }
+
+        @media (min-width: 768px) {
+            .workflow-card {
+                padding: 22px;
+            }
+        }
+
+        .workflow-step {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            padding: 14px;
+            background: rgba(255, 255, 255, 0.025);
+            border: 1px solid var(--border);
+            border-radius: 10px;
+            color: var(--text-primary);
+            font-size: 13px;
+            font-weight: 700;
+        }
+
+        .workflow-number {
+            color: var(--accent-hover);
+            font-size: 10px;
+            font-weight: 800;
+        }
+
+        .workflow-connector {
+            width: 1px;
+            height: 20px;
+            margin-left: 27px;
+            background: rgba(91, 140, 255, 0.35);
+        }
+
+        /* =========================================================
+           10. ANALYTICS SECTION
+        ========================================================= */
+        .analytics-grid {
+            display: grid;
+            grid-template-columns: 1fr;
+            gap: 16px;
+        }
+
+        @media (min-width: 768px) {
+            .analytics-grid {
+                grid-template-columns: repeat(3, 1fr);
+            }
+        }
+
+        .analytics-card {
+            position: relative;
+            min-height: 220px;
+            padding: 24px;
+            overflow: hidden;
+            background: linear-gradient(145deg, rgba(15, 29, 48, 0.96), rgba(9, 18, 31, 0.96));
+            border: 1px solid var(--border);
+            border-radius: var(--radius-lg);
+        }
+
+        @media (min-width: 768px) {
+            .analytics-card {
+                padding: 28px;
+            }
+        }
+
+        .analytics-card::after {
+            content: "";
+            position: absolute;
+            right: -50px;
+            bottom: -80px;
+            width: 170px;
+            height: 170px;
+            border-radius: 50%;
+            background: rgba(91, 140, 255, 0.07);
+            filter: blur(20px);
+        }
+
+        .analytics-label {
+            color: var(--text-muted);
+            font-size: 10px;
+            font-weight: 800;
+            letter-spacing: 0.1em;
+            text-transform: uppercase;
+        }
+
+        .analytics-value {
+            display: block;
+            margin-top: 10px;
+            font-size: 28px;
+            line-height: 1;
+            letter-spacing: -0.04em;
+        }
+
+        @media (min-width: 768px) {
+            .analytics-value {
+                font-size: 32px;
+            }
+        }
+
+        .analytics-change {
+            display: block;
+            margin-top: 6px;
+            color: var(--success);
+            font-size: 11px;
+            font-weight: 700;
+        }
+
+        .analytics-visual {
+            position: absolute;
+            left: 24px;
+            right: 24px;
+            bottom: 20px;
+            height: 55px;
+        }
+
+        @media (min-width: 768px) {
+            .analytics-visual {
+                left: 28px;
+                right: 28px;
+                bottom: 25px;
+                height: 65px;
+            }
+        }
+
+        .analytics-visual svg {
+            width: 100%;
+            height: 100%;
+        }
+
+        .analytics-visual path {
+            fill: none;
+            stroke: var(--accent);
+            stroke-width: 2.5;
+            stroke-linecap: round;
+        }
+
+        /* =========================================================
+           11. SECURITY SECTION
+        ========================================================= */
+        .security {
+            display: grid;
+            grid-template-columns: 1fr;
+            gap: 40px;
+            align-items: center;
+        }
+
+        @media (min-width: 951px) {
+            .security {
+                grid-template-columns: repeat(2, 1fr);
+                gap: 80px;
+            }
+        }
+
+        .security-content h2 {
+            margin-top: 14px;
+            font-size: clamp(28px, 4vw, 50px);
+            line-height: 1.15;
+            letter-spacing: -0.045em;
+        }
+
+        .security-content p {
+            margin-top: 16px;
+            color: var(--text-secondary);
+            font-size: 15px;
+            line-height: 1.8;
+        }
+
+        .security-list {
+            display: grid;
+            gap: 12px;
+        }
+
+        .security-item {
+            padding: 18px;
+            background: rgba(255, 255, 255, 0.025);
+            border: 1px solid var(--border);
+            border-radius: 13px;
+        }
+
+        @media (min-width: 768px) {
+            .security-item {
+                padding: 20px;
+            }
+        }
+
+        .security-item strong {
+            display: block;
+            font-size: 14px;
+        }
+
+        .security-item span {
+            display: block;
+            margin-top: 4px;
+            color: var(--text-secondary);
+            font-size: 12px;
+            line-height: 1.6;
+        }
+
+        /* =========================================================
+           12. CTA SECTION
+        ========================================================= */
+        .cta {
+            padding-top: 50px;
+            padding-bottom: 90px;
+        }
+
+        @media (min-width: 768px) {
+            .cta {
+                padding-top: 70px;
+                padding-bottom: 150px;
+            }
+        }
+
+        .cta-box {
+            position: relative;
+            overflow: hidden;
+            max-width: 900px;
+            margin: 0 auto;
+            padding: 50px 20px;
+            text-align: center;
+            background: radial-gradient(circle at 50% 0%, rgba(91, 140, 255, 0.15), transparent 60%), var(--surface);
+            border: 1px solid var(--border-light);
+            border-radius: var(--radius-xl);
+            box-shadow: var(--shadow-lg);
+        }
+
+        @media (min-width: 768px) {
+            .cta-box {
+                padding: 80px 40px;
+            }
+        }
+
+        .cta-box h2 {
+            max-width: 650px;
+            margin: 14px auto 0;
+            font-size: clamp(28px, 4vw, 50px);
+            line-height: 1.15;
+            letter-spacing: -0.045em;
+        }
+
+        .cta-box p {
+            max-width: 560px;
+            margin: 16px auto 0;
+            color: var(--text-secondary);
+            font-size: 15px;
+            line-height: 1.8;
+        }
+
+        .cta-box .btn {
+            margin-top: 26px;
+            width: 100%;
+        }
+
+        @media (min-width: 500px) {
+            .cta-box .btn {
+                width: auto;
+            }
+        }
+
+        /* =========================================================
+           13. FOOTER
+        ========================================================= */
+        .site-footer {
+            background: #050a11;
+            border-top: 1px solid var(--border);
+        }
+
+        .footer-main {
+            width: min(var(--container), calc(100% - 32px));
+            margin: 0 auto;
+            padding: 50px 0;
+            display: grid;
+            grid-template-columns: 1fr;
+            gap: 35px;
+        }
+
+        @media (min-width: 640px) {
+            .footer-main {
+                grid-template-columns: repeat(2, 1fr);
+                gap: 40px;
+            }
+        }
+
+        @media (min-width: 951px) {
+            .footer-main {
+                width: min(var(--container), calc(100% - 48px));
+                grid-template-columns: 2fr repeat(3, 1fr);
+                gap: 50px;
+                padding: 70px 0;
+            }
+        }
+
+        .footer-brand p {
+            max-width: 300px;
+            margin-top: 14px;
+            color: var(--text-muted);
+            font-size: 12px;
+            line-height: 1.8;
+        }
+
+        .footer-column {
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+        }
+
+        .footer-column h3 {
+            margin-bottom: 4px;
+            font-size: 11px;
+            letter-spacing: 0.1em;
+            text-transform: uppercase;
+        }
+
+        .footer-column a {
+            color: var(--text-muted);
+            font-size: 13px;
+            transition: color var(--transition);
+            padding: 4px 0;
+        }
+
+        .footer-column a:hover {
+            color: #ffffff;
+        }
+
+        .footer-bottom {
+            width: min(var(--container), calc(100% - 32px));
+            margin: 0 auto;
+            padding: 20px 0;
+            display: flex;
+            flex-direction: column;
+            align-items: flex-start;
+            gap: 14px;
+            border-top: 1px solid var(--border);
+            color: var(--text-muted);
+            font-size: 11px;
+        }
+
+        @media (min-width: 768px) {
+            .footer-bottom {
+                width: min(var(--container), calc(100% - 48px));
+                flex-direction: row;
+                align-items: center;
+                justify-content: space-between;
+            }
+        }
+
+        .footer-legal {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 16px;
+        }
+
+        .footer-legal a:hover {
+            color: #ffffff;
+        }
+
+        /* =========================================================
+           14. SCROLL REVEAL ANIMATIONS
+        ========================================================= */
+        .reveal {
+            opacity: 0;
+            transform: translateY(20px);
+            transition: opacity 600ms ease, transform 600ms ease;
+        }
+
+        .reveal.visible {
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        /* =========================================================
+           15. ACCESSIBILITY & REDUCED MOTION
+        ========================================================= */
+        :focus-visible {
+            outline: 2px solid var(--accent);
+            outline-offset: 3px;
+        }
+
+        @media (prefers-reduced-motion: reduce) {
+            html {
+                scroll-behavior: auto;
+            }
+            *, *::before, *::after {
+                animation-duration: 0.01ms !important;
+                animation-iteration-count: 1 !important;
+                transition-duration: 0.01ms !important;
+            }
+            .reveal {
+                opacity: 1;
+                transform: none;
+            }
+        }
+    </style>
+</head>
+<body>
+
+    <!-- =========================================================
+         HEADER & NAVIGATION
+    ========================================================== -->
+    <header class="site-header" id="site-header">
+        <nav class="navbar" id="navbar" aria-label="Primary navigation">
+            <a href="#home" class="logo" aria-label="VEYRA home">
+                <span class="logo-mark">V</span>
+                VEYRA
+            </a>
+
+            <!-- DESKTOP NAV -->
+            <ul class="nav-links">
+                <li><a href="#features">Product</a></li>
+                <li><a href="#solutions">Solutions</a></li>
+                <li><a href="#analytics">Analytics</a></li>
+                <li><a href="#security">Security</a></li>
+                <li><a href="#resources">Resources</a></li>
+            </ul>
+
+            <div class="nav-actions">
+                <a href="login.html" class="login-link">Log in</a>
+                <a href="#get-started" class="btn btn-primary">Get Started</a>
+            </div>
+
+            <!-- MOBILE MENU TRIGGER -->
+            <button type="button" class="mobile-menu-button" id="mobile-menu-button" aria-label="Open navigation menu" aria-expanded="false">
+                ☰
+            </button>
+        </nav>
+    </header>
+
+    <!-- MOBILE NAVIGATION DRAWER -->
+    <div class="mobile-drawer-overlay" id="mobile-drawer-overlay"></div>
+    <div class="mobile-drawer" id="mobile-drawer" aria-hidden="true">
+        <div class="mobile-drawer-header">
+            <a href="#home" class="logo mobile-drawer-logo">
+                <span class="logo-mark">V</span>
+                VEYRA
+            </a>
+            <button type="button" class="mobile-drawer-close" id="mobile-drawer-close" aria-label="Close navigation menu">&times;</button>
+        </div>
+        <ul class="mobile-drawer-links">
+            <li><a href="#features" class="mobile-nav-link">Product</a></li>
+            <li><a href="#solutions" class="mobile-nav-link">Solutions</a></li>
+            <li><a href="#analytics" class="mobile-nav-link">Analytics</a></li>
+            <li><a href="#security" class="mobile-nav-link">Security</a></li>
+            <li><a href="#resources" class="mobile-nav-link">Resources</a></li>
+        </ul>
+        <div class="mobile-drawer-actions">
+            <a href="login.html" class="btn btn-secondary">Log in</a>
+            <a href="#get-started" class="btn btn-primary">Get Started</a>
+        </div>
+    </div>
+
+    <main>
+        <!-- =====================================================
+             HERO SECTION
+        ====================================================== -->
+        <section class="hero" id="home">
+            <div class="hero-content reveal">
+                <span class="hero-badge">
+                    Business Operations Platform
+                </span>
+                <h1>
+                    One platform for
+                    <span>smarter operations.</span>
+                </h1>
+                <p class="hero-description">
+                    VEYRA brings your customers, projects, teams,
+                    operations, and business data together in one
+                    centralized platform built for modern businesses.
+                </p>
+                <div class="hero-actions">
+                    <a href="#get-started" class="btn btn-primary btn-large">
+                        Start Your Journey
+                        <span aria-hidden="true">&nbsp;→</span>
+                    </a>
+                    <a href="#features" class="btn btn-secondary btn-large">
+                        Explore VEYRA
+                    </a>
+                </div>
+                <p class="hero-note">
+                    Centralize operations. Understand performance.
+                    Make better-informed decisions.
+                </p>
+            </div>
+
+            <!-- =================================================
+                 PRODUCT PREVIEW
+            ================================================== -->
+            <div class="product-preview reveal" aria-label="VEYRA platform preview">
+                <div class="product-window">
+                    <div class="window-bar">
+                        <div class="window-dots">
+                            <span></span>
+                            <span></span>
+                            <span></span>
+                        </div>
+                        <span class="window-title">
+                            app.veyra.com/dashboard
+                        </span>
+                    </div>
+
+                    <div class="preview-body">
+                        <!-- Preview Sidebar -->
+                        <aside class="preview-sidebar">
+                            <div class="preview-brand">
+                                <span class="preview-brand-mark">V</span>
+                                VEYRA
+                            </div>
+                            <div class="preview-nav-label">MAIN</div>
+                            <div class="preview-nav-item active">Dashboard</div>
+                            <div class="preview-nav-item">Projects</div>
+                            <div class="preview-nav-item">Customers</div>
+                            <div class="preview-nav-item">Analytics</div>
+                            <div class="preview-nav-label">MANAGEMENT</div>
+                            <div class="preview-nav-item">Team</div>
+                            <div class="preview-nav-item">Reports</div>
+                        </aside>
+
+                        <!-- Preview Main -->
+                        <div class="preview-content">
+                            <div class="preview-top">
+                                <div>
+                                    <h3>Business Overview</h3>
+                                </div>
+                                <span>September 2026</span>
+                            </div>
+
+                            <!-- Stats -->
+                            <div class="preview-stats">
+                                <div class="preview-stat">
+                                    <span class="preview-stat-label">Revenue</span>
+                                    <strong class="preview-stat-value">$128.4K</strong>
+                                    <span class="preview-stat-change">+12.8%</span>
+                                </div>
+                                <div class="preview-stat">
+                                    <span class="preview-stat-label">Projects</span>
+                                    <strong class="preview-stat-value">24</strong>
+                                    <span class="preview-stat-change">+4 this month</span>
+                                </div>
+                                <div class="preview-stat">
+                                    <span class="preview-stat-label">Customers</span>
+                                    <strong class="preview-stat-value">1,284</strong>
+                                    <span class="preview-stat-change">+8.4%</span>
+                                </div>
+                            </div>
+
+                            <!-- Chart -->
+                            <div class="preview-chart">
+                                <div class="preview-chart-header">
+                                    <span>Business Performance</span>
+                                    <span>Last 30 days</span>
+                                </div>
+                                <div class="chart">
+                                    <svg viewBox="0 0 700 200" preserveAspectRatio="none" aria-hidden="true">
+                                        <path class="chart-area" d="M0,165 L55,150 L110,158 L165,130 L220,140 L275,105 L330,118 L385,92 L440,100 L495,72 L550,84 L610,52 L700,62 L700,200 L0,200 Z"></path>
+                                        <path class="chart-line" d="M0,165 L55,150 L110,158 L165,130 L220,140 L275,105 L330,118 L385,92 L440,100 L495,72 L550,84 L610,52 L700,62"></path>
+                                        <circle class="chart-point" cx="610" cy="52" r="5"></circle>
+                                    </svg>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- =====================================================
+             TRUST BAR
+        ====================================================== -->
+        <section class="trust">
+            <div class="container">
+                <p>Built around the core functions modern businesses rely on</p>
+                <div class="trust-items">
+                    <span class="trust-item">Operations</span>
+                    <span class="trust-item">Projects</span>
+                    <span class="trust-item">Customers</span>
+                    <span class="trust-item">Analytics</span>
+                    <span class="trust-item">Performance</span>
+                </div>
+            </div>
+        </section>
+
+        <!-- =====================================================
+             FEATURES SECTION
+        ====================================================== -->
+        <section class="section" id="features">
+            <div class="container">
+                <div class="section-header reveal">
+                    <span class="eyebrow">Platform Capabilities</span>
+                    <h2>Everything your business needs, connected in one system.</h2>
+                    <p>VEYRA is designed to bring the different parts of business operations into a single environment where information can be managed, measured, and understood.</p>
+                </div>
+
+                <div class="feature-grid">
+                    <article class="feature-card reveal">
+                        <div class="feature-icon">◈</div>
+                        <h3>Business Operations</h3>
+                        <p>Centralize important business activity and create a clearer view of what is happening across your organization.</p>
+                        <a href="#solutions" class="feature-link">Explore operations →</a>
+                    </article>
+
+                    <article class="feature-card reveal">
+                        <div class="feature-icon">◇</div>
+                        <h3>Project Management</h3>
+                        <p>Organize projects, monitor progress, manage priorities, and give teams a shared operational workspace.</p>
+                        <a href="#solutions" class="feature-link">Manage projects →</a>
+                    </article>
+
+                    <article class="feature-card reveal">
+                        <div class="feature-icon">◎</div>
+                        <h3>Customer Management</h3>
+                        <p>Maintain a centralized view of customers, customer activity, and important relationship information.</p>
+                        <a href="#solutions" class="feature-link">Manage customers →</a>
+                    </article>
+
+                    <article class="feature-card reveal">
+                        <div class="feature-icon">◫</div>
+                        <h3>Data Analytics</h3>
+                        <p>Transform operational information into useful metrics, reports, and insights that support business analysis.</p>
+                        <a href="#analytics" class="feature-link">Explore analytics →</a>
+                    </article>
+
+                    <article class="feature-card reveal">
+                        <div class="feature-icon">↗</div>
+                        <h3>Performance Tracking</h3>
+                        <p>Monitor important business indicators and identify changes that require attention.</p>
+                        <a href="#analytics" class="feature-link">Track performance →</a>
+                    </article>
+
+                    <article class="feature-card reveal">
+                        <div class="feature-icon">◉</div>
+                        <h3>Team Collaboration</h3>
+                        <p>Give teams a shared environment for coordinating work, tasks, projects, and business activity.</p>
+                        <a href="#get-started" class="feature-link">Explore collaboration →</a>
+                    </article>
+                </div>
+            </div>
+        </section>
+
+        <!-- =====================================================
+             SOLUTIONS SECTION
+        ====================================================== -->
+        <section class="section" id="solutions">
+            <div class="container solutions">
+                <div class="solution-content reveal">
+                    <span class="eyebrow">Built for Growth</span>
+                    <h2>Turn scattered business activity into connected workflows.</h2>
+                    <p>VEYRA provides a centralized foundation for managing information and understanding how different areas of the business are performing.</p>
+                    <ul class="solution-list">
+                        <li><span class="solution-check">✓</span>Centralized business information</li>
+                        <li><span class="solution-check">✓</span>Operational visibility</li>
+                        <li><span class="solution-check">✓</span>Data-driven reporting</li>
+                        <li><span class="solution-check">✓</span>Scalable architecture</li>
+                    </ul>
+                </div>
+
+                <div class="workflow-container reveal">
+                    <div class="workflow-card">
+                        <div class="workflow-step">
+                            <span class="workflow-number">01</span>
+                            Collect Business Data
+                        </div>
+                        <div class="workflow-connector"></div>
+                        <div class="workflow-step">
+                            <span class="workflow-number">02</span>
+                            Manage Operations
+                        </div>
+                        <div class="workflow-connector"></div>
+                        <div class="workflow-step">
+                            <span class="workflow-number">03</span>
+                            Analyze Performance
+                        </div>
+                        <div class="workflow-connector"></div>
+                        <div class="workflow-step">
+                            <span class="workflow-number">04</span>
+                            Make Informed Decisions
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- =====================================================
+             ANALYTICS SECTION
+        ====================================================== -->
+        <section class="section" id="analytics">
+            <div class="container">
+                <div class="section-header reveal">
+                    <span class="eyebrow">Data & Analytics</span>
+                    <h2>Understand what your business data is telling you.</h2>
+                    <p>VEYRA is designed to turn operational data into measurable business information through dashboards, metrics, reports, and analytics.</p>
+                </div>
+
+                <div class="analytics-grid">
+                    <article class="analytics-card reveal">
+                        <span class="analytics-label">Monthly Growth</span>
+                        <strong class="analytics-value">+24.6%</strong>
+                        <span class="analytics-change">↑ Growth compared with previous period</span>
+                        <div class="analytics-visual" aria-hidden="true">
+                            <svg viewBox="0 0 400 80" preserveAspectRatio="none">
+                                <path d="M0 64 C35 58, 45 62, 75 50 C105 38, 115 48, 145 40 C175 32, 185 38, 215 27 C245 18, 265 30, 290 18 C325 5, 345 17, 400 7"></path>
+                            </svg>
+                        </div>
+                    </article>
+
+                    <article class="analytics-card reveal">
+                        <span class="analytics-label">Active Users</span>
+                        <strong class="analytics-value">8,492</strong>
+                        <span class="analytics-change">↑ 8.4% this month</span>
+                        <div class="analytics-visual" aria-hidden="true">
+                            <svg viewBox="0 0 400 80" preserveAspectRatio="none">
+                                <path d="M0 54 C40 45, 55 50, 85 44 C115 38, 130 42, 160 35 C190 28, 205 35, 235 27 C265 19, 285 25, 315 15 C345 7, 370 16, 400 5"></path>
+                            </svg>
+                        </div>
+                    </article>
+
+                    <article class="analytics-card reveal">
+                        <span class="analytics-label">Completed Projects</span>
+                        <strong class="analytics-value">342</strong>
+                        <span class="analytics-change">↑ 18 completed this month</span>
+                        <div class="analytics-visual" aria-hidden="true">
+                            <svg viewBox="0 0 400 80" preserveAspectRatio="none">
+                                <path d="M0 65 C40 60, 50 61, 80 55 C110 49, 120 54, 150 44 C180 34, 200 43, 225 34 C255 25, 275 33, 305 20 C335 10, 360 17, 400 8"></path>
+                            </svg>
+                        </div>
+                    </article>
+                </div>
+            </div>
+        </section>
+
+        <!-- =====================================================
+             SECURITY SECTION
+        ====================================================== -->
+        <section class="section" id="security">
+            <div class="container security">
+                <div class="security-content reveal">
+                    <span class="eyebrow">Security & Reliability</span>
+                    <h2>Built with security as part of the architecture.</h2>
+                    <p>VEYRA is being designed around secure authentication, controlled access, reliable infrastructure, and responsible handling of business information.</p>
+                </div>
+
+                <div class="security-list">
+                    <article class="security-item reveal">
+                        <strong>Secure Authentication</strong>
+                        <span>Designed for protected account access and secure authentication workflows.</span>
+                    </article>
+                    <article class="security-item reveal">
+                        <strong>Role-Based Access</strong>
+                        <span>Access controls can define what different users and teams are permitted to access.</span>
+                    </article>
+                    <article class="security-item reveal">
+                        <strong>Reliable Infrastructure</strong>
+                        <span>The platform architecture is designed with scalable cloud deployment in mind.</span>
+                    </article>
+                    <article class="security-item reveal">
+                        <strong>Responsible Data Handling</strong>
+                        <span>Business information should be handled through controlled and auditable workflows.</span>
+                    </article>
+                </div>
+            </div>
+        </section>
+
+        <!-- =====================================================
+             RESOURCES SECTION
+        ====================================================== -->
+        <section class="section" id="resources">
+            <div class="container">
+                <div class="section-header reveal">
+                    <span class="eyebrow">Resources</span>
+                    <h2>Everything needed to work with the platform.</h2>
+                    <p>VEYRA will provide the tools and documentation required to understand, manage, and extend the platform.</p>
+                </div>
+
+                <div class="feature-grid">
+                    <article class="feature-card reveal">
+                        <div class="feature-icon">?</div>
+                        <h3>Help Center</h3>
+                        <p>Find guidance for using the platform, managing workflows, and understanding available features.</p>
+                        <a href="#get-started" class="feature-link">Learn more →</a>
+                    </article>
+                    <article class="feature-card reveal">
+                        <div class="feature-icon">&lt;/&gt;</div>
+                        <h3>Developer Resources</h3>
+                        <p>Technical documentation and resources for integrating and extending VEYRA.</p>
+                        <a href="#get-started" class="feature-link">Developer portal →</a>
+                    </article>
+                    <article class="feature-card reveal">
+                        <div class="feature-icon">↗</div>
+                        <h3>Reports</h3>
+                        <p>Access business reports and performance information from a centralized environment.</p>
+                        <a href="#analytics" class="feature-link">Explore reports →</a>
+                    </article>
+                </div>
+            </div>
+        </section>
+
+        <!-- =====================================================
+             CTA SECTION
+        ====================================================== -->
+        <section class="section cta" id="get-started">
+            <div class="container">
+                <div class="cta-box reveal">
+                    <span class="eyebrow">Get Started</span>
+                    <h2>Build a smarter way to run your business.</h2>
+                    <p>Bring your operations, customers, projects, teams, and data together with VEYRA.</p>
+                    <a href="login.html" class="btn btn-primary btn-large">
+                        Create Your Account
+                        <span aria-hidden="true">&nbsp;→</span>
+                    </a>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <!-- =========================================================
+         FOOTER
+    ========================================================== -->
+    <footer class="site-footer">
+        <div class="footer-main container">
+            <div class="footer-brand">
+                <a href="#home" class="logo">
+                    <span class="logo-mark">V</span>
+                    VEYRA
+                </a>
+                <p>The modern operations platform for high-performance businesses, centralized analytics, and team collaboration.</p>
+            </div>
+            <div class="footer-column">
+                <h3>Product</h3>
+                <a href="#features">Features</a>
+                <a href="#solutions">Solutions</a>
+                <a href="#analytics">Analytics</a>
+                <a href="#security">Security</a>
+            </div>
+            <div class="footer-column">
+                <h3>Resources</h3>
+                <a href="#resources">Help Center</a>
+                <a href="#resources">Documentation</a>
+                <a href="#resources">API Status</a>
+            </div>
+            <div class="footer-column">
+                <h3>Company</h3>
+                <a href="#home">About</a>
+                <a href="#get-started">Careers</a>
+                <a href="#get-started">Contact</a>
+            </div>
+        </div>
+        <div class="footer-bottom container">
+            <span>&copy; 2026 VEYRA Inc. All rights reserved.</span>
+            <div class="footer-legal">
+                <a href="#home">Privacy Policy</a>
+                <a href="#home">Terms of Service</a>
+                <a href="#home">Security</a>
+            </div>
+        </div>
+    </footer>
+
+    <script>
+        document.addEventListener("DOMContentLoaded", () => {
+            // Header scroll shadow effect
+            const siteHeader = document.getElementById("site-header");
+            window.addEventListener("scroll", () => {
+                if (window.scrollY > 20) {
+                    siteHeader.classList.add("scrolled");
+                } else {
+                    siteHeader.classList.remove("scrolled");
+                }
+            });
+
+            // Mobile Navigation Drawer Controller
+            const menuButton = document.getElementById("mobile-menu-button");
+            const drawer = document.getElementById("mobile-drawer");
+            const overlay = document.getElementById("mobile-drawer-overlay");
+            const closeButton = document.getElementById("mobile-drawer-close");
+            const mobileLinks = document.querySelectorAll(".mobile-nav-link");
+
+            function openDrawer() {
+                drawer.classList.add("active");
+                overlay.classList.add("active");
+                menuButton.setAttribute("aria-expanded", "true");
+                document.body.style.overflow = "hidden";
+            }
+
+            function closeDrawer() {
+                drawer.classList.remove("active");
+                overlay.classList.remove("active");
+                menuButton.setAttribute("aria-expanded", "false");
+                document.body.style.overflow = "";
+            }
+
+            menuButton?.addEventListener("click", openDrawer);
+            closeButton?.addEventListener("click", closeDrawer);
+            overlay?.addEventListener("click", closeDrawer);
+
+            mobileLinks.forEach(link => {
+                link.addEventListener("click", closeDrawer);
+            });
+
+            // Scroll reveal animation observer
+            const revealElements = document.querySelectorAll(".reveal");
+            const observerOptions = {
+                threshold: 0.1,
+                rootMargin: "0px 0px -50px 0px"
+            };
+
+            const revealObserver = new IntersectionObserver((entries, observer) => {
+                entries.forEach(entry => {
+                    if (entry.isIntersecting) {
+                        entry.target.classList.add("visible");
+                        observer.unobserve(entry.target);
+                    }
+                });
+            }, observerOptions);
+
+            revealElements.forEach(el => {
+                revealObserver.observe(el);
+            });
+        });
+    </script>
+</body>
+</html>

@@ -1,0 +1,1272 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="Manage your team with VEYRA — members, roles, departments, and collaboration.">
+    <meta name="theme-color" content="#07111f">
+    <title>Team | VEYRA</title>
+
+    <style>
+        /* =========================================================
+           01. DESIGN SYSTEM
+        ========================================================= */
+        :root {
+            --bg-primary: #07111f;
+            --bg-secondary: #0a1626;
+            --bg-tertiary: #0d1b2d;
+            --surface: #0f1d30;
+            --surface-hover: #13243a;
+            --border: rgba(255, 255, 255, 0.08);
+            --border-light: rgba(255, 255, 255, 0.12);
+            --text-primary: #f5f7fb;
+            --text-secondary: #a9b5c7;
+            --text-muted: #718096;
+            --accent: #5b8cff;
+            --accent-hover: #719bff;
+            --success: #35d07f;
+            --warning: #f5a623;
+            --danger: #ff6b6b;
+            --radius-sm: 8px;
+            --radius-md: 12px;
+            --radius-lg: 16px;
+            --radius-xl: 24px;
+            --shadow-sm: 0 8px 24px rgba(0, 0, 0, 0.18);
+            --shadow-lg: 0 30px 80px rgba(0, 0, 0, 0.38);
+            --transition: 180ms ease;
+            --sidebar-width: 280px;
+        }
+
+        *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+        html { scroll-behavior: smooth; }
+
+        body {
+            min-height: 100vh;
+            background: var(--bg-primary);
+            color: var(--text-primary);
+            font-family: Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+            line-height: 1.6;
+            overflow-x: hidden;
+        }
+
+        a { color: inherit; text-decoration: none; }
+        button, input, select, textarea { font: inherit; }
+        button { border: 0; background: none; cursor: pointer; color: inherit; }
+        ul { list-style: none; }
+
+        ::selection { background: rgba(91, 140, 255, 0.35); color: #ffffff; }
+        :focus-visible { outline: 2px solid var(--accent); outline-offset: 3px; }
+
+        .app-layout { display: flex; min-height: 100vh; }
+
+        /* Sidebar */
+        .app-sidebar {
+            position: fixed; top: 0; left: 0;
+            width: var(--sidebar-width); height: 100vh;
+            background: var(--bg-secondary);
+            border-right: 1px solid var(--border);
+            display: flex; flex-direction: column;
+            z-index: 200;
+            transition: transform 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+            overflow-y: auto;
+        }
+
+        .sidebar-brand {
+            display: flex; align-items: center; justify-content: space-between;
+            padding: 20px 20px 16px; border-bottom: 1px solid var(--border);
+        }
+
+        .logo {
+            display: inline-flex; align-items: center; gap: 10px;
+            font-size: 18px; font-weight: 850; letter-spacing: 0.15em;
+        }
+
+        .logo-mark {
+            width: 30px; height: 30px; display: grid; place-items: center;
+            border-radius: 8px;
+            background: linear-gradient(135deg, #5b8cff, #7fa3ff);
+            color: white; font-size: 12px; font-weight: 900;
+            box-shadow: 0 6px 18px rgba(91, 140, 255, 0.25);
+        }
+
+        .sidebar-close {
+            display: none; width: 36px; height: 36px; place-items: center;
+            background: rgba(255, 255, 255, 0.05); border-radius: 8px;
+            color: var(--text-secondary); font-size: 20px;
+        }
+
+        .workspace-selector {
+            display: flex; align-items: center; gap: 12px;
+            margin: 16px 16px 8px; padding: 12px;
+            background: rgba(255, 255, 255, 0.03);
+            border: 1px solid var(--border); border-radius: 12px;
+            cursor: pointer;
+            transition: background var(--transition), border-color var(--transition);
+        }
+        .workspace-selector:hover { background: rgba(255, 255, 255, 0.05); border-color: var(--border-light); }
+
+        .workspace-avatar {
+            width: 36px; height: 36px; display: grid; place-items: center;
+            border-radius: 9px;
+            background: linear-gradient(135deg, #5b8cff, #4778ea);
+            color: white; font-size: 14px; font-weight: 800; flex-shrink: 0;
+        }
+
+        .workspace-info { flex: 1; min-width: 0; }
+        .workspace-info strong { display: block; font-size: 13px; font-weight: 700; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+        .workspace-info span { display: block; color: var(--text-muted); font-size: 11px; }
+        .workspace-arrow { color: var(--text-muted); font-size: 12px; }
+
+        .sidebar-nav { flex: 1; padding: 12px 16px; overflow-y: auto; }
+
+        .nav-section-title {
+            display: block; margin: 18px 8px 8px;
+            color: var(--text-muted); font-size: 10px; font-weight: 800;
+            letter-spacing: 0.12em; text-transform: uppercase;
+        }
+        .nav-section-title:first-child { margin-top: 4px; }
+
+        .sidebar-link {
+            display: flex; align-items: center; gap: 12px;
+            padding: 10px 12px; margin-bottom: 2px; border-radius: 10px;
+            color: var(--text-secondary); font-size: 13px; font-weight: 600;
+            transition: background var(--transition), color var(--transition);
+        }
+        .sidebar-link:hover { background: rgba(255, 255, 255, 0.04); color: var(--text-primary); }
+        .sidebar-link.active { background: rgba(91, 140, 255, 0.12); color: #ffffff; }
+        .sidebar-icon { width: 20px; text-align: center; font-size: 14px; opacity: 0.9; }
+
+        .sidebar-bottom { padding: 16px; border-top: 1px solid var(--border); }
+
+        .upgrade-card {
+            padding: 16px;
+            background: linear-gradient(145deg, rgba(91, 140, 255, 0.12), rgba(91, 140, 255, 0.04));
+            border: 1px solid rgba(91, 140, 255, 0.18);
+            border-radius: 14px; margin-bottom: 12px;
+        }
+        .upgrade-icon {
+            display: inline-flex; width: 28px; height: 28px;
+            align-items: center; justify-content: center;
+            border-radius: 8px; background: rgba(91, 140, 255, 0.2);
+            color: var(--accent-hover); font-size: 14px; margin-bottom: 10px;
+        }
+        .upgrade-card strong { display: block; font-size: 13px; margin-bottom: 4px; }
+        .upgrade-card p { color: var(--text-secondary); font-size: 11px; line-height: 1.5; margin-bottom: 10px; }
+        .upgrade-card a { color: var(--accent-hover); font-size: 12px; font-weight: 700; }
+        .upgrade-card a:hover { color: #ffffff; }
+
+        .sidebar-profile {
+            display: flex; align-items: center; gap: 10px; width: 100%;
+            padding: 10px; border-radius: 10px;
+            background: rgba(255, 255, 255, 0.03); border: 1px solid var(--border);
+            transition: background var(--transition); text-align: left;
+        }
+        .sidebar-profile:hover { background: rgba(255, 255, 255, 0.06); }
+
+        .profile-avatar {
+            width: 32px; height: 32px; display: grid; place-items: center;
+            border-radius: 8px; background: rgba(91, 140, 255, 0.2);
+            color: var(--accent-hover); font-size: 12px; font-weight: 800; flex-shrink: 0;
+        }
+        .profile-info { flex: 1; min-width: 0; }
+        .profile-info strong { display: block; font-size: 12px; font-weight: 700; }
+        .profile-info small { display: block; color: var(--text-muted); font-size: 10px; }
+
+        .sidebar-overlay {
+            position: fixed; inset: 0;
+            background: rgba(0, 0, 0, 0.55); backdrop-filter: blur(4px);
+            z-index: 150; opacity: 0; visibility: hidden;
+            transition: opacity 0.25s ease, visibility 0.25s ease;
+        }
+        .sidebar-overlay.active { opacity: 1; visibility: visible; }
+
+        /* Main */
+        .dashboard-main {
+            flex: 1; margin-left: var(--sidebar-width); min-height: 100vh;
+            display: flex; flex-direction: column;
+            background: radial-gradient(circle at 80% -20%, rgba(91, 140, 255, 0.07), transparent 40%), var(--bg-primary);
+        }
+
+        .dashboard-topbar {
+            position: sticky; top: 0; z-index: 100;
+            display: flex; align-items: center; justify-content: space-between; gap: 16px;
+            height: 72px; padding: 0 24px;
+            background: rgba(7, 17, 31, 0.85); border-bottom: 1px solid var(--border);
+            backdrop-filter: blur(18px); -webkit-backdrop-filter: blur(18px);
+        }
+
+        .topbar-left { display: flex; align-items: center; gap: 16px; }
+
+        .sidebar-toggle {
+            display: none; width: 40px; height: 40px; place-items: center;
+            background: rgba(255, 255, 255, 0.05); border: 1px solid var(--border-light);
+            border-radius: 10px; color: #ffffff; font-size: 18px;
+        }
+
+        .breadcrumb {
+            display: block; color: var(--text-muted); font-size: 11px;
+            font-weight: 600; letter-spacing: 0.04em; margin-bottom: 2px;
+        }
+        .topbar-left h1 { font-size: 18px; font-weight: 750; letter-spacing: -0.02em; }
+
+        .topbar-actions { display: flex; align-items: center; gap: 8px; }
+
+        .topbar-button {
+            width: 40px; height: 40px; display: grid; place-items: center;
+            background: rgba(255, 255, 255, 0.04); border: 1px solid var(--border);
+            border-radius: 10px; color: var(--text-secondary); font-size: 16px;
+            transition: background var(--transition), color var(--transition);
+        }
+        .topbar-button:hover { background: rgba(255, 255, 255, 0.08); color: #ffffff; }
+
+        .topbar-user {
+            display: flex; align-items: center; gap: 8px;
+            padding: 6px 10px 6px 6px;
+            background: rgba(255, 255, 255, 0.04); border: 1px solid var(--border);
+            border-radius: 10px; transition: background var(--transition);
+        }
+        .topbar-user:hover { background: rgba(255, 255, 255, 0.08); }
+        .topbar-user-name { font-size: 13px; font-weight: 600; }
+
+        .dashboard-content {
+            flex: 1; padding: 28px 24px 48px; max-width: 1400px; width: 100%;
+        }
+
+        /* Welcome */
+        .dashboard-welcome {
+            display: flex; flex-wrap: wrap; align-items: flex-end;
+            justify-content: space-between; gap: 20px; margin-bottom: 28px;
+        }
+        .section-label {
+            display: block; color: var(--accent-hover); font-size: 11px;
+            font-weight: 800; letter-spacing: 0.14em; text-transform: uppercase; margin-bottom: 6px;
+        }
+        .dashboard-welcome h2 {
+            font-size: clamp(24px, 3vw, 32px); font-weight: 800;
+            letter-spacing: -0.03em; line-height: 1.2;
+        }
+        .dashboard-welcome p {
+            margin-top: 6px; color: var(--text-secondary); font-size: 14px; max-width: 480px;
+        }
+        .dashboard-actions { display: flex; flex-wrap: wrap; gap: 10px; }
+
+        .btn {
+            min-height: 44px; display: inline-flex; align-items: center; justify-content: center;
+            gap: 6px; padding: 0 20px; border-radius: 10px; font-size: 13px; font-weight: 700;
+            transition: transform var(--transition), background var(--transition), box-shadow var(--transition);
+            touch-action: manipulation;
+        }
+        .btn:hover { transform: translateY(-1px); }
+        .btn-primary {
+            color: #ffffff;
+            background: linear-gradient(135deg, #5b8cff, #4778ea);
+            box-shadow: 0 10px 24px rgba(91, 140, 255, 0.22);
+        }
+        .btn-primary:hover {
+            background: linear-gradient(135deg, #6b98ff, #527ff0);
+            box-shadow: 0 14px 30px rgba(91, 140, 255, 0.3);
+        }
+
+        .dashboard-secondary-button {
+            min-height: 44px; display: inline-flex; align-items: center; justify-content: center;
+            padding: 0 18px; border-radius: 10px; color: var(--text-primary);
+            background: rgba(255, 255, 255, 0.04); border: 1px solid var(--border-light);
+            font-size: 13px; font-weight: 700;
+            transition: background var(--transition), border-color var(--transition);
+        }
+        .dashboard-secondary-button:hover { background: rgba(255, 255, 255, 0.08); }
+
+        /* KPI */
+        .kpi-grid {
+            display: grid; grid-template-columns: 1fr; gap: 14px; margin-bottom: 28px;
+        }
+        @media (min-width: 560px) { .kpi-grid { grid-template-columns: repeat(2, 1fr); } }
+        @media (min-width: 1100px) { .kpi-grid { grid-template-columns: repeat(4, 1fr); } }
+
+        .kpi-card {
+            position: relative; padding: 20px;
+            background: linear-gradient(145deg, rgba(15, 29, 48, 0.96), rgba(9, 18, 31, 0.96));
+            border: 1px solid var(--border); border-radius: var(--radius-lg); overflow: hidden;
+            transition: border-color var(--transition), transform var(--transition);
+        }
+        .kpi-card:hover { border-color: rgba(91, 140, 255, 0.22); transform: translateY(-2px); }
+        .kpi-card::after {
+            content: ""; position: absolute; right: -40px; bottom: -50px;
+            width: 120px; height: 120px; border-radius: 50%;
+            background: rgba(91, 140, 255, 0.06); filter: blur(16px); pointer-events: none;
+        }
+        .kpi-header { display: flex; align-items: center; justify-content: space-between; margin-bottom: 12px; }
+        .kpi-header > span:first-child {
+            color: var(--text-muted); font-size: 11px; font-weight: 700;
+            letter-spacing: 0.06em; text-transform: uppercase;
+        }
+        .kpi-icon {
+            width: 32px; height: 32px; display: grid; place-items: center;
+            border-radius: 8px; background: rgba(91, 140, 255, 0.1);
+            border: 1px solid rgba(91, 140, 255, 0.16); color: var(--accent-hover); font-size: 14px;
+        }
+        .kpi-icon.success { background: rgba(53, 208, 127, 0.12); border-color: rgba(53, 208, 127, 0.2); color: var(--success); }
+        .kpi-card strong { display: block; font-size: 28px; font-weight: 800; letter-spacing: -0.03em; line-height: 1.1; }
+        .kpi-change {
+            display: flex; align-items: center; gap: 6px; margin-top: 8px;
+            font-size: 12px; font-weight: 600; color: var(--text-muted);
+        }
+        .kpi-change.positive { color: var(--success); }
+        .kpi-change.negative { color: var(--danger); }
+
+        /* Card / table */
+        .dashboard-card {
+            padding: 22px;
+            background: linear-gradient(145deg, rgba(15, 29, 48, 0.95), rgba(9, 18, 31, 0.95));
+            border: 1px solid var(--border); border-radius: var(--radius-lg);
+        }
+        .card-header {
+            display: flex; align-items: flex-start; justify-content: space-between;
+            gap: 12px; margin-bottom: 18px;
+        }
+        .card-label {
+            display: block; color: var(--text-muted); font-size: 10px; font-weight: 800;
+            letter-spacing: 0.1em; text-transform: uppercase; margin-bottom: 4px;
+        }
+        .card-header h3 { font-size: 16px; font-weight: 750; letter-spacing: -0.02em; }
+
+        .project-toolbar {
+            display: flex; flex-wrap: wrap; align-items: center; gap: 12px; margin-bottom: 18px;
+        }
+        .project-search {
+            display: flex; align-items: center; gap: 10px; flex: 1;
+            min-width: 180px; max-width: 340px; padding: 0 14px; height: 42px;
+            background: rgba(255, 255, 255, 0.03); border: 1px solid var(--border);
+            border-radius: 10px; color: var(--text-muted);
+        }
+        .project-search input {
+            flex: 1; background: transparent; border: 0; color: var(--text-primary);
+            font-size: 13px; outline: none; min-width: 0;
+        }
+        .project-search input::placeholder { color: var(--text-muted); }
+
+        .project-filters { display: flex; flex-wrap: wrap; gap: 8px; }
+        .project-filters select {
+            height: 42px; padding: 0 32px 0 14px;
+            background: rgba(255, 255, 255, 0.03); border: 1px solid var(--border);
+            border-radius: 10px; color: var(--text-primary); font-size: 13px; font-weight: 600;
+            cursor: pointer; outline: none; appearance: none;
+            background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 12 12'%3E%3Cpath fill='%23718096' d='M3 4.5L6 8l3-3.5'/%3E%3C/svg%3E");
+            background-repeat: no-repeat; background-position: right 12px center;
+        }
+        .project-filters select:focus { border-color: rgba(91, 140, 255, 0.4); }
+
+        .view-toggle {
+            display: flex; height: 42px; border: 1px solid var(--border);
+            border-radius: 10px; overflow: hidden;
+        }
+        .view-toggle button {
+            width: 42px; display: grid; place-items: center;
+            color: var(--text-muted); font-size: 14px;
+            transition: background var(--transition), color var(--transition);
+        }
+        .view-toggle button.active { background: rgba(91, 140, 255, 0.15); color: var(--accent-hover); }
+        .view-toggle button:hover:not(.active) { background: rgba(255, 255, 255, 0.04); color: var(--text-primary); }
+
+        .table-wrapper { overflow-x: auto; margin: 0 -4px; }
+        table { width: 100%; border-collapse: collapse; font-size: 13px; }
+        thead th {
+            padding: 12px 14px; text-align: left; color: var(--text-muted);
+            font-size: 11px; font-weight: 700; letter-spacing: 0.06em;
+            text-transform: uppercase; border-bottom: 1px solid var(--border); white-space: nowrap;
+        }
+        tbody td {
+            padding: 14px; border-bottom: 1px solid var(--border);
+            color: var(--text-secondary); vertical-align: middle;
+        }
+        tbody tr { transition: background var(--transition); }
+        tbody tr:hover { background: rgba(255, 255, 255, 0.025); }
+        tbody tr:last-child td { border-bottom: 0; }
+
+        .member-cell { display: flex; align-items: center; gap: 12px; }
+        .member-avatar {
+            width: 40px; height: 40px; display: grid; place-items: center;
+            border-radius: 10px; font-size: 12px; font-weight: 800; flex-shrink: 0;
+            color: #fff;
+        }
+        .member-avatar.c0 { background: linear-gradient(135deg, #5b8cff, #4778ea); }
+        .member-avatar.c1 { background: linear-gradient(135deg, #35d07f, #22c55e); }
+        .member-avatar.c2 { background: linear-gradient(135deg, #f5a623, #f59e0b); }
+        .member-avatar.c3 { background: linear-gradient(135deg, #a78bfa, #8b5cf6); }
+        .member-avatar.c4 { background: linear-gradient(135deg, #f472b6, #ec4899); }
+        .member-avatar.c5 { background: linear-gradient(135deg, #22d3ee, #06b6d4); }
+
+        .member-cell strong { display: block; color: var(--text-primary); font-size: 13px; font-weight: 650; }
+        .member-cell small { display: block; color: var(--text-muted); font-size: 11px; margin-top: 2px; }
+
+        .role-badge {
+            display: inline-flex; padding: 4px 10px; border-radius: 999px;
+            font-size: 11px; font-weight: 700; white-space: nowrap;
+            background: rgba(91, 140, 255, 0.12); color: var(--accent-hover);
+        }
+        .role-badge.admin { background: rgba(167, 139, 250, 0.15); color: #a78bfa; }
+        .role-badge.manager { background: rgba(91, 140, 255, 0.12); color: var(--accent-hover); }
+        .role-badge.member { background: rgba(255, 255, 255, 0.06); color: var(--text-secondary); }
+        .role-badge.viewer { background: rgba(255, 255, 255, 0.04); color: var(--text-muted); }
+
+        .status {
+            display: inline-flex; align-items: center; gap: 6px;
+            padding: 5px 11px; border-radius: 999px;
+            font-size: 11px; font-weight: 700; white-space: nowrap;
+        }
+        .status::before {
+            content: ""; width: 6px; height: 6px; border-radius: 50%; background: currentColor;
+        }
+        .status-active { background: rgba(53, 208, 127, 0.12); color: var(--success); }
+        .status-away { background: rgba(245, 166, 35, 0.12); color: var(--warning); }
+        .status-offline { background: rgba(255, 255, 255, 0.06); color: var(--text-muted); }
+
+        .dept-tag {
+            font-size: 12px; color: var(--text-secondary); font-weight: 600;
+        }
+
+        .table-action {
+            width: 32px; height: 32px; display: grid; place-items: center;
+            border-radius: 8px; color: var(--text-muted); font-size: 16px;
+            transition: background var(--transition), color var(--transition); position: relative;
+        }
+        .table-action:hover { background: rgba(255, 255, 255, 0.06); color: var(--text-primary); }
+
+        .action-menu {
+            position: absolute; right: 0; top: 100%; margin-top: 4px;
+            min-width: 170px; padding: 6px;
+            background: var(--bg-secondary); border: 1px solid var(--border-light);
+            border-radius: 10px; box-shadow: var(--shadow-lg); z-index: 50; display: none;
+        }
+        .action-menu.open { display: block; }
+        .action-menu button {
+            display: flex; align-items: center; gap: 8px; width: 100%;
+            padding: 9px 12px; border-radius: 7px; color: var(--text-secondary);
+            font-size: 12px; font-weight: 600; text-align: left;
+            transition: background var(--transition), color var(--transition);
+        }
+        .action-menu button:hover { background: rgba(255, 255, 255, 0.06); color: var(--text-primary); }
+        .action-menu button.danger:hover { background: rgba(255, 107, 107, 0.12); color: var(--danger); }
+
+        .empty-project-state {
+            padding: 48px 20px; text-align: center; color: var(--text-muted);
+        }
+        .empty-project-state strong { display: block; color: var(--text-secondary); font-size: 15px; margin-bottom: 6px; }
+        .empty-project-state p { font-size: 13px; margin-bottom: 16px; }
+
+        /* Grid cards view */
+        .team-grid {
+            display: none;
+            grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+            gap: 14px;
+        }
+        .team-grid.active { display: grid; }
+        .table-view.hidden { display: none; }
+
+        .team-card {
+            padding: 20px;
+            background: rgba(255, 255, 255, 0.025);
+            border: 1px solid var(--border);
+            border-radius: var(--radius-md);
+            transition: border-color var(--transition), transform var(--transition);
+        }
+        .team-card:hover {
+            border-color: rgba(91, 140, 255, 0.25);
+            transform: translateY(-2px);
+        }
+        .team-card-top {
+            display: flex; align-items: center; gap: 14px; margin-bottom: 14px;
+        }
+        .team-card-top .member-avatar { width: 48px; height: 48px; font-size: 14px; }
+        .team-card-name { font-size: 14px; font-weight: 700; color: var(--text-primary); }
+        .team-card-email { font-size: 11px; color: var(--text-muted); margin-top: 2px; }
+        .team-card-meta {
+            display: flex; flex-wrap: wrap; gap: 8px; margin-bottom: 12px;
+        }
+        .team-card-footer {
+            display: flex; align-items: center; justify-content: space-between;
+            padding-top: 12px; border-top: 1px solid var(--border);
+            font-size: 11px; color: var(--text-muted);
+        }
+
+        /* Modal */
+        .modal {
+            position: fixed; inset: 0; z-index: 300;
+            display: flex; align-items: center; justify-content: center;
+            padding: 20px; opacity: 0; visibility: hidden;
+            transition: opacity 0.25s ease, visibility 0.25s ease;
+        }
+        .modal.open { opacity: 1; visibility: visible; }
+        .modal-overlay {
+            position: absolute; inset: 0;
+            background: rgba(0, 0, 0, 0.6); backdrop-filter: blur(6px);
+        }
+        .modal-card {
+            position: relative; width: 100%; max-width: 480px; max-height: 90vh;
+            overflow-y: auto; background: var(--bg-secondary);
+            border: 1px solid var(--border-light); border-radius: var(--radius-lg);
+            box-shadow: var(--shadow-lg); padding: 28px;
+            transform: translateY(12px) scale(0.98);
+            transition: transform 0.25s cubic-bezier(0.16, 1, 0.3, 1);
+        }
+        .modal.open .modal-card { transform: translateY(0) scale(1); }
+
+        .modal-header {
+            display: flex; align-items: flex-start; justify-content: space-between;
+            gap: 16px; margin-bottom: 24px;
+        }
+        .modal-header h2 { font-size: 20px; font-weight: 750; letter-spacing: -0.02em; }
+        .modal-close {
+            width: 36px; height: 36px; display: grid; place-items: center;
+            background: rgba(255, 255, 255, 0.05); border-radius: 8px;
+            color: var(--text-secondary); font-size: 20px; flex-shrink: 0;
+            transition: background var(--transition), color var(--transition);
+        }
+        .modal-close:hover { background: rgba(255, 255, 255, 0.1); color: #ffffff; }
+
+        .form-group { margin-bottom: 16px; }
+        .form-group label {
+            display: block; margin-bottom: 6px; color: var(--text-secondary);
+            font-size: 12px; font-weight: 650;
+        }
+        .form-group input, .form-group select, .form-group textarea {
+            width: 100%; height: 44px; padding: 0 14px;
+            background: rgba(255, 255, 255, 0.04); border: 1px solid var(--border);
+            border-radius: 10px; color: var(--text-primary); font-size: 14px; outline: none;
+            transition: border-color var(--transition), background var(--transition);
+        }
+        .form-group textarea { height: auto; min-height: 72px; padding: 12px 14px; resize: vertical; }
+        .form-group input:focus, .form-group select:focus, .form-group textarea:focus {
+            border-color: rgba(91, 140, 255, 0.45); background: rgba(91, 140, 255, 0.04);
+        }
+        .form-group input::placeholder, .form-group textarea::placeholder { color: var(--text-muted); }
+        .form-row { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+        @media (max-width: 480px) { .form-row { grid-template-columns: 1fr; } }
+
+        .modal-actions {
+            display: flex; justify-content: flex-end; gap: 10px;
+            margin-top: 24px; padding-top: 20px; border-top: 1px solid var(--border);
+        }
+
+        /* Toast */
+        .toast-container {
+            position: fixed; bottom: 24px; right: 24px; z-index: 400;
+            display: flex; flex-direction: column; gap: 10px; pointer-events: none;
+        }
+        .toast {
+            display: flex; align-items: center; gap: 12px; padding: 14px 18px;
+            background: var(--bg-secondary); border: 1px solid var(--border-light);
+            border-radius: 12px; box-shadow: var(--shadow-lg);
+            font-size: 13px; font-weight: 600; color: var(--text-primary);
+            pointer-events: auto; animation: toast-in 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+            max-width: 360px;
+        }
+        .toast.success { border-color: rgba(53, 208, 127, 0.3); }
+        .toast.error { border-color: rgba(255, 107, 107, 0.3); }
+        .toast-icon {
+            width: 28px; height: 28px; display: grid; place-items: center;
+            border-radius: 8px; font-size: 14px; flex-shrink: 0;
+        }
+        .toast.success .toast-icon { background: rgba(53, 208, 127, 0.15); color: var(--success); }
+        .toast.error .toast-icon { background: rgba(255, 107, 107, 0.15); color: var(--danger); }
+        @keyframes toast-in {
+            from { opacity: 0; transform: translateY(12px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        @media (max-width: 950px) {
+            .app-sidebar { transform: translateX(-100%); }
+            .app-sidebar.open { transform: translateX(0); }
+            .sidebar-close { display: grid; }
+            .dashboard-main { margin-left: 0; }
+            .sidebar-toggle { display: grid; }
+            .topbar-user-name { display: none; }
+        }
+        @media (max-width: 600px) {
+            .dashboard-content { padding: 20px 16px 40px; }
+            .dashboard-topbar { padding: 0 16px; height: 64px; }
+            .kpi-card strong { font-size: 24px; }
+        }
+        @media (prefers-reduced-motion: reduce) {
+            *, *::before, *::after {
+                animation-duration: 0.01ms !important;
+                animation-iteration-count: 1 !important;
+                transition-duration: 0.01ms !important;
+            }
+        }
+    </style>
+</head>
+<body class="dashboard-page">
+
+<div class="app-layout">
+
+    <aside class="app-sidebar" id="app-sidebar" aria-label="Application navigation">
+        <div class="sidebar-brand">
+            <a href="index.html" class="logo" aria-label="VEYRA home">
+                <span class="logo-mark">V</span>
+                VEYRA
+            </a>
+            <button class="sidebar-close" id="sidebar-close" type="button" aria-label="Close navigation">×</button>
+        </div>
+
+        <div class="workspace-selector" role="button" tabindex="0" aria-label="Switch workspace">
+            <div class="workspace-avatar">V</div>
+            <div class="workspace-info">
+                <strong>Veyra Workspace</strong>
+                <span>Business Account</span>
+            </div>
+            <span class="workspace-arrow">▾</span>
+        </div>
+
+        <nav class="sidebar-nav">
+            <span class="nav-section-title">MAIN</span>
+            <a href="dashboard.html" class="sidebar-link">
+                <span class="sidebar-icon">▦</span>
+                <span>Dashboard</span>
+            </a>
+            <a href="projects.html" class="sidebar-link">
+                <span class="sidebar-icon">◇</span>
+                <span>Projects</span>
+            </a>
+            <a href="customers.html" class="sidebar-link">
+                <span class="sidebar-icon">◎</span>
+                <span>Customers</span>
+            </a>
+            <a href="analytics.html" class="sidebar-link">
+                <span class="sidebar-icon">◫</span>
+                <span>Analytics</span>
+            </a>
+
+            <span class="nav-section-title">MANAGEMENT</span>
+            <a href="team.html" class="sidebar-link active" aria-current="page">
+                <span class="sidebar-icon">◌</span>
+                <span>Team</span>
+            </a>
+            <a href="#" class="sidebar-link">
+                <span class="sidebar-icon">✓</span>
+                <span>Tasks</span>
+            </a>
+            <a href="#" class="sidebar-link">
+                <span class="sidebar-icon">▤</span>
+                <span>Reports</span>
+            </a>
+
+            <span class="nav-section-title">SYSTEM</span>
+            <a href="#" class="sidebar-link">
+                <span class="sidebar-icon">⚙</span>
+                <span>Settings</span>
+            </a>
+        </nav>
+
+        <div class="sidebar-bottom">
+            <div class="upgrade-card">
+                <span class="upgrade-icon">✦</span>
+                <strong>Grow with VEYRA</strong>
+                <p>Unlock advanced analytics and business tools.</p>
+                <a href="#">Explore plans →</a>
+            </div>
+            <button class="sidebar-profile" type="button" aria-label="Account menu">
+                <span class="profile-avatar">U</span>
+                <span class="profile-info">
+                    <strong>User Account</strong>
+                    <small>Administrator</small>
+                </span>
+                <span>⋮</span>
+            </button>
+        </div>
+    </aside>
+
+    <div class="sidebar-overlay" id="sidebar-overlay"></div>
+
+    <main class="dashboard-main">
+        <header class="dashboard-topbar">
+            <div class="topbar-left">
+                <button class="sidebar-toggle" id="sidebar-toggle" type="button" aria-label="Open navigation" aria-expanded="false">☰</button>
+                <div>
+                    <span class="breadcrumb">Workspace / Team</span>
+                    <h1>Team</h1>
+                </div>
+            </div>
+            <div class="topbar-actions">
+                <button class="topbar-button" type="button" aria-label="Search">⌕</button>
+                <button class="topbar-button" type="button" aria-label="Notifications">♢</button>
+                <button class="topbar-user" type="button" aria-label="User menu">
+                    <span class="profile-avatar">U</span>
+                    <span class="topbar-user-name">User</span>
+                    <span>▾</span>
+                </button>
+            </div>
+        </header>
+
+        <div class="dashboard-content">
+
+            <section class="dashboard-welcome">
+                <div>
+                    <span class="section-label">People & Collaboration</span>
+                    <h2>Your Team</h2>
+                    <p>Manage members, roles, and departments across your organization.</p>
+                </div>
+                <div class="dashboard-actions">
+                    <button class="dashboard-secondary-button" id="team-export" type="button">Export</button>
+                    <button class="btn btn-primary" id="new-member-button" type="button">+ Invite Member</button>
+                </div>
+            </section>
+
+            <section class="kpi-grid" aria-label="Team statistics">
+                <article class="kpi-card">
+                    <div class="kpi-header">
+                        <span>Total Members</span>
+                        <span class="kpi-icon">◌</span>
+                    </div>
+                    <strong id="kpi-total">0</strong>
+                    <div class="kpi-change neutral">Across all departments</div>
+                </article>
+                <article class="kpi-card">
+                    <div class="kpi-header">
+                        <span>Active Now</span>
+                        <span class="kpi-icon success">●</span>
+                    </div>
+                    <strong id="kpi-active">0</strong>
+                    <div class="kpi-change positive">Online or available</div>
+                </article>
+                <article class="kpi-card">
+                    <div class="kpi-header">
+                        <span>Departments</span>
+                        <span class="kpi-icon">▦</span>
+                    </div>
+                    <strong id="kpi-depts">0</strong>
+                    <div class="kpi-change neutral">Teams represented</div>
+                </article>
+                <article class="kpi-card">
+                    <div class="kpi-header">
+                        <span>Admins</span>
+                        <span class="kpi-icon">★</span>
+                    </div>
+                    <strong id="kpi-admins">0</strong>
+                    <div class="kpi-change neutral">Full access</div>
+                </article>
+            </section>
+
+            <section class="dashboard-card">
+                <div class="card-header">
+                    <div>
+                        <span class="card-label">Directory</span>
+                        <h3>Team Members</h3>
+                    </div>
+                </div>
+
+                <div class="project-toolbar">
+                    <div class="project-search">
+                        <span>⌕</span>
+                        <input type="search" id="member-search" placeholder="Search members..." aria-label="Search members">
+                    </div>
+                    <div class="project-filters">
+                        <select id="member-status-filter" aria-label="Filter by status">
+                            <option value="all">All Status</option>
+                            <option value="active">Active</option>
+                            <option value="away">Away</option>
+                            <option value="offline">Offline</option>
+                        </select>
+                        <select id="member-dept-filter" aria-label="Filter by department">
+                            <option value="all">All Departments</option>
+                            <option value="Product">Product</option>
+                            <option value="Engineering">Engineering</option>
+                            <option value="Design">Design</option>
+                            <option value="Data">Data</option>
+                            <option value="Sales">Sales</option>
+                            <option value="Operations">Operations</option>
+                        </select>
+                        <select id="member-sort" aria-label="Sort members">
+                            <option value="name">Sort: Name</option>
+                            <option value="role">Sort: Role</option>
+                            <option value="department">Sort: Department</option>
+                            <option value="joined">Sort: Joined</option>
+                        </select>
+                    </div>
+                    <div class="view-toggle" role="group" aria-label="View mode">
+                        <button type="button" class="active" id="view-table" aria-label="Table view" title="Table view">☰</button>
+                        <button type="button" id="view-grid" aria-label="Grid view" title="Grid view">▦</button>
+                    </div>
+                </div>
+
+                <div class="table-view" id="table-view">
+                    <div class="table-wrapper">
+                        <table>
+                            <thead>
+                                <tr>
+                                    <th>Member</th>
+                                    <th>Role</th>
+                                    <th>Department</th>
+                                    <th>Status</th>
+                                    <th>Joined</th>
+                                    <th>Action</th>
+                                </tr>
+                            </thead>
+                            <tbody id="members-table-body"></tbody>
+                        </table>
+                    </div>
+                </div>
+
+                <div class="team-grid" id="team-grid"></div>
+
+                <div class="empty-project-state" id="empty-state" hidden>
+                    <strong>No members found</strong>
+                    <p>Try another search or filter, or invite a new member.</p>
+                    <button class="btn btn-primary" type="button" id="empty-new-member">+ Invite Member</button>
+                </div>
+            </section>
+
+        </div>
+    </main>
+</div>
+
+<!-- Modal -->
+<div class="modal" id="member-modal" aria-hidden="true">
+    <div class="modal-overlay" id="modal-overlay"></div>
+    <section class="modal-card" role="dialog" aria-modal="true" aria-labelledby="modal-title">
+        <div class="modal-header">
+            <div>
+                <span class="card-label">TEAM</span>
+                <h2 id="modal-title">Invite Member</h2>
+            </div>
+            <button class="modal-close" id="modal-close" type="button" aria-label="Close modal">×</button>
+        </div>
+        <form id="member-form">
+            <input type="hidden" id="member-edit-id" value="">
+            <div class="form-group">
+                <label for="member-name">Full name</label>
+                <input type="text" id="member-name" placeholder="e.g. Alex Rivera" required autocomplete="name">
+            </div>
+            <div class="form-group">
+                <label for="member-email">Email</label>
+                <input type="email" id="member-email" placeholder="alex@company.com" required autocomplete="email">
+            </div>
+            <div class="form-row">
+                <div class="form-group">
+                    <label for="member-role">Role</label>
+                    <select id="member-role">
+                        <option value="admin">Admin</option>
+                        <option value="manager">Manager</option>
+                        <option value="member" selected>Member</option>
+                        <option value="viewer">Viewer</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label for="member-department">Department</label>
+                    <select id="member-department">
+                        <option value="Product">Product</option>
+                        <option value="Engineering">Engineering</option>
+                        <option value="Design">Design</option>
+                        <option value="Data">Data</option>
+                        <option value="Sales">Sales</option>
+                        <option value="Operations">Operations</option>
+                    </select>
+                </div>
+            </div>
+            <div class="form-row">
+                <div class="form-group">
+                    <label for="member-status">Status</label>
+                    <select id="member-status">
+                        <option value="active">Active</option>
+                        <option value="away">Away</option>
+                        <option value="offline">Offline</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label for="member-title">Job title</label>
+                    <input type="text" id="member-title" placeholder="e.g. Product Designer">
+                </div>
+            </div>
+            <div class="modal-actions">
+                <button type="button" class="dashboard-secondary-button" id="modal-cancel">Cancel</button>
+                <button type="submit" class="btn btn-primary" id="modal-submit">Invite Member</button>
+            </div>
+        </form>
+    </section>
+</div>
+
+<div class="toast-container" id="toast-container" aria-live="polite"></div>
+
+<script>
+document.addEventListener("DOMContentLoaded", () => {
+    const ROLE_LABEL = { admin: "Admin", manager: "Manager", member: "Member", viewer: "Viewer" };
+    const STATUS_LABEL = { active: "Active", away: "Away", offline: "Offline" };
+    const STATUS_CLASS = { active: "status-active", away: "status-away", offline: "status-offline" };
+
+    let members = [
+        { id: 1, name: "Olivia Carter", email: "olivia@veyra.com", role: "admin", department: "Product", status: "active", title: "Head of Product", joined: "2025-03-12", color: 0 },
+        { id: 2, name: "Daniel Morgan", email: "daniel@veyra.com", role: "manager", department: "Engineering", status: "active", title: "Engineering Lead", joined: "2025-04-01", color: 1 },
+        { id: 3, name: "Sophia Williams", email: "sophia@veyra.com", role: "member", department: "Design", status: "active", title: "Senior Designer", joined: "2025-05-18", color: 2 },
+        { id: 4, name: "Michael Chen", email: "michael@veyra.com", role: "manager", department: "Data", status: "away", title: "Data Science Lead", joined: "2025-06-02", color: 3 },
+        { id: 5, name: "Emma Park", email: "emma@veyra.com", role: "member", department: "Design", status: "active", title: "Product Designer", joined: "2025-07-14", color: 4 },
+        { id: 6, name: "Alex Rivera", email: "alex@veyra.com", role: "member", department: "Engineering", status: "active", title: "Full-Stack Engineer", joined: "2025-08-01", color: 5 },
+        { id: 7, name: "Sarah Kim", email: "sarah@veyra.com", role: "member", department: "Sales", status: "offline", title: "Account Executive", joined: "2025-08-20", color: 0 },
+        { id: 8, name: "James Wilson", email: "james@veyra.com", role: "viewer", department: "Operations", status: "active", title: "Ops Analyst", joined: "2025-09-05", color: 1 },
+        { id: 9, name: "Priya Sharma", email: "priya@veyra.com", role: "member", department: "Product", status: "active", title: "Product Manager", joined: "2025-09-12", color: 2 },
+        { id: 10, name: "Lucas Brandt", email: "lucas@veyra.com", role: "member", department: "Engineering", status: "away", title: "Backend Engineer", joined: "2025-09-22", color: 3 },
+        { id: 11, name: "Nina Okonkwo", email: "nina@veyra.com", role: "admin", department: "Operations", status: "active", title: "COO", joined: "2025-02-01", color: 4 },
+        { id: 12, name: "Tom Hughes", email: "tom@veyra.com", role: "manager", department: "Sales", status: "active", title: "Sales Director", joined: "2025-04-15", color: 5 }
+    ];
+
+    let nextId = 13;
+    let currentView = "table";
+    let openMenuId = null;
+
+    const tableBody = document.getElementById("members-table-body");
+    const teamGrid = document.getElementById("team-grid");
+    const emptyState = document.getElementById("empty-state");
+    const tableView = document.getElementById("table-view");
+    const searchInput = document.getElementById("member-search");
+    const statusFilter = document.getElementById("member-status-filter");
+    const deptFilter = document.getElementById("member-dept-filter");
+    const sortSelect = document.getElementById("member-sort");
+    const modal = document.getElementById("member-modal");
+    const form = document.getElementById("member-form");
+    const modalTitle = document.getElementById("modal-title");
+    const modalSubmit = document.getElementById("modal-submit");
+    const editIdInput = document.getElementById("member-edit-id");
+
+    function initials(name) {
+        return name.split(/\s+/).map(p => p[0]).join("").slice(0, 2).toUpperCase();
+    }
+
+    function formatDate(iso) {
+        if (!iso) return "—";
+        const d = new Date(iso + "T00:00:00");
+        return d.toLocaleDateString("en-US", { month: "short", day: "numeric", year: "numeric" });
+    }
+
+    function escapeHtml(str) {
+        const d = document.createElement("div");
+        d.textContent = str;
+        return d.innerHTML;
+    }
+
+    function showToast(message, type = "success") {
+        const container = document.getElementById("toast-container");
+        const toast = document.createElement("div");
+        toast.className = `toast ${type}`;
+        toast.innerHTML = `<span class="toast-icon">${type === "success" ? "✓" : "!"}</span><span>${message}</span>`;
+        container.appendChild(toast);
+        setTimeout(() => {
+            toast.style.opacity = "0";
+            toast.style.transform = "translateY(8px)";
+            toast.style.transition = "0.25s ease";
+            setTimeout(() => toast.remove(), 250);
+        }, 2800);
+    }
+
+    function updateKPIs() {
+        document.getElementById("kpi-total").textContent = members.length;
+        document.getElementById("kpi-active").textContent = members.filter(m => m.status === "active").length;
+        document.getElementById("kpi-depts").textContent = new Set(members.map(m => m.department)).size;
+        document.getElementById("kpi-admins").textContent = members.filter(m => m.role === "admin").length;
+    }
+
+    function getFiltered() {
+        const q = (searchInput.value || "").trim().toLowerCase();
+        const status = statusFilter.value;
+        const dept = deptFilter.value;
+        let list = members.slice();
+
+        if (q) {
+            list = list.filter(m =>
+                m.name.toLowerCase().includes(q) ||
+                m.email.toLowerCase().includes(q) ||
+                (m.title || "").toLowerCase().includes(q) ||
+                m.department.toLowerCase().includes(q)
+            );
+        }
+        if (status !== "all") list = list.filter(m => m.status === status);
+        if (dept !== "all") list = list.filter(m => m.department === dept);
+
+        const sort = sortSelect.value;
+        list.sort((a, b) => {
+            if (sort === "name") return a.name.localeCompare(b.name);
+            if (sort === "role") return a.role.localeCompare(b.role);
+            if (sort === "department") return a.department.localeCompare(b.department);
+            if (sort === "joined") return (b.joined || "").localeCompare(a.joined || "");
+            return 0;
+        });
+        return list;
+    }
+
+    function renderTable() {
+        const list = getFiltered();
+        tableBody.innerHTML = "";
+        if (list.length === 0) {
+            emptyState.hidden = false;
+            return;
+        }
+        emptyState.hidden = true;
+
+        list.forEach(m => {
+            const tr = document.createElement("tr");
+            tr.innerHTML = `
+                <td>
+                    <div class="member-cell">
+                        <span class="member-avatar c${m.color}">${initials(m.name)}</span>
+                        <div>
+                            <strong>${escapeHtml(m.name)}</strong>
+                            <small>${escapeHtml(m.email)}</small>
+                        </div>
+                    </div>
+                </td>
+                <td><span class="role-badge ${m.role}">${ROLE_LABEL[m.role]}</span></td>
+                <td><span class="dept-tag">${escapeHtml(m.department)}</span></td>
+                <td><span class="status ${STATUS_CLASS[m.status]}">${STATUS_LABEL[m.status]}</span></td>
+                <td>${formatDate(m.joined)}</td>
+                <td style="position:relative">
+                    <button class="table-action" type="button" data-action-menu="${m.id}" aria-label="Member options">⋮</button>
+                    <div class="action-menu" id="menu-${m.id}">
+                        <button type="button" data-edit="${m.id}">✎ Edit</button>
+                        <button type="button" data-activate="${m.id}">✓ Set active</button>
+                        <button type="button" class="danger" data-delete="${m.id}">✕ Remove</button>
+                    </div>
+                </td>
+            `;
+            tableBody.appendChild(tr);
+        });
+    }
+
+    function renderGrid() {
+        const list = getFiltered();
+        teamGrid.innerHTML = "";
+        if (list.length === 0) {
+            emptyState.hidden = false;
+            return;
+        }
+        emptyState.hidden = true;
+
+        list.forEach(m => {
+            const card = document.createElement("div");
+            card.className = "team-card";
+            card.innerHTML = `
+                <div class="team-card-top">
+                    <span class="member-avatar c${m.color}">${initials(m.name)}</span>
+                    <div>
+                        <div class="team-card-name">${escapeHtml(m.name)}</div>
+                        <div class="team-card-email">${escapeHtml(m.email)}</div>
+                    </div>
+                </div>
+                <div class="team-card-meta">
+                    <span class="role-badge ${m.role}">${ROLE_LABEL[m.role]}</span>
+                    <span class="status ${STATUS_CLASS[m.status]}">${STATUS_LABEL[m.status]}</span>
+                </div>
+                <div class="team-card-footer">
+                    <span>${escapeHtml(m.department)}${m.title ? " · " + escapeHtml(m.title) : ""}</span>
+                    <span>${formatDate(m.joined)}</span>
+                </div>
+            `;
+            card.addEventListener("dblclick", () => openEditModal(m.id));
+            teamGrid.appendChild(card);
+        });
+    }
+
+    function render() {
+        updateKPIs();
+        if (currentView === "table") {
+            tableView.classList.remove("hidden");
+            teamGrid.classList.remove("active");
+            renderTable();
+        } else {
+            tableView.classList.add("hidden");
+            teamGrid.classList.add("active");
+            renderGrid();
+        }
+    }
+
+    function openModal(edit = false) {
+        modal.classList.add("open");
+        modal.setAttribute("aria-hidden", "false");
+        document.body.style.overflow = "hidden";
+        if (!edit) {
+            form.reset();
+            editIdInput.value = "";
+            modalTitle.textContent = "Invite Member";
+            modalSubmit.textContent = "Invite Member";
+            document.getElementById("member-role").value = "member";
+            document.getElementById("member-status").value = "active";
+            document.getElementById("member-department").value = "Product";
+        }
+        setTimeout(() => document.getElementById("member-name").focus(), 100);
+    }
+
+    function closeModal() {
+        modal.classList.remove("open");
+        modal.setAttribute("aria-hidden", "true");
+        document.body.style.overflow = "";
+        form.reset();
+        editIdInput.value = "";
+    }
+
+    function openEditModal(id) {
+        const m = members.find(x => x.id === Number(id));
+        if (!m) return;
+        editIdInput.value = m.id;
+        document.getElementById("member-name").value = m.name;
+        document.getElementById("member-email").value = m.email;
+        document.getElementById("member-role").value = m.role;
+        document.getElementById("member-department").value = m.department;
+        document.getElementById("member-status").value = m.status;
+        document.getElementById("member-title").value = m.title || "";
+        modalTitle.textContent = "Edit Member";
+        modalSubmit.textContent = "Save Changes";
+        openModal(true);
+    }
+
+    // Sidebar
+    const sidebar = document.getElementById("app-sidebar");
+    const overlay = document.getElementById("sidebar-overlay");
+    const toggleBtn = document.getElementById("sidebar-toggle");
+    const closeBtn = document.getElementById("sidebar-close");
+
+    function openSidebar() {
+        sidebar.classList.add("open");
+        overlay.classList.add("active");
+        toggleBtn?.setAttribute("aria-expanded", "true");
+        document.body.style.overflow = "hidden";
+    }
+    function closeSidebar() {
+        sidebar.classList.remove("open");
+        overlay.classList.remove("active");
+        toggleBtn?.setAttribute("aria-expanded", "false");
+        document.body.style.overflow = "";
+    }
+
+    toggleBtn?.addEventListener("click", openSidebar);
+    closeBtn?.addEventListener("click", closeSidebar);
+    overlay?.addEventListener("click", closeSidebar);
+
+    document.getElementById("new-member-button")?.addEventListener("click", () => openModal(false));
+    document.getElementById("empty-new-member")?.addEventListener("click", () => openModal(false));
+    document.getElementById("modal-close")?.addEventListener("click", closeModal);
+    document.getElementById("modal-cancel")?.addEventListener("click", closeModal);
+    document.getElementById("modal-overlay")?.addEventListener("click", closeModal);
+
+    document.addEventListener("keydown", (e) => {
+        if (e.key === "Escape") {
+            if (modal.classList.contains("open")) closeModal();
+            else if (sidebar.classList.contains("open")) closeSidebar();
+            closeAllMenus();
+        }
+    });
+
+    form?.addEventListener("submit", (e) => {
+        e.preventDefault();
+        const id = editIdInput.value ? Number(editIdInput.value) : null;
+        const data = {
+            name: document.getElementById("member-name").value.trim(),
+            email: document.getElementById("member-email").value.trim(),
+            role: document.getElementById("member-role").value,
+            department: document.getElementById("member-department").value,
+            status: document.getElementById("member-status").value,
+            title: document.getElementById("member-title").value.trim()
+        };
+        if (!data.name || !data.email) return;
+
+        if (id) {
+            const idx = members.findIndex(m => m.id === id);
+            if (idx !== -1) {
+                members[idx] = { ...members[idx], ...data };
+                showToast(`“${data.name}” updated`);
+            }
+        } else {
+            const today = new Date().toISOString().slice(0, 10);
+            members.unshift({
+                id: nextId++,
+                ...data,
+                joined: today,
+                color: Math.floor(Math.random() * 6)
+            });
+            showToast(`“${data.name}” invited`);
+        }
+        closeModal();
+        render();
+    });
+
+    searchInput?.addEventListener("input", render);
+    statusFilter?.addEventListener("change", render);
+    deptFilter?.addEventListener("change", render);
+    sortSelect?.addEventListener("change", render);
+
+    document.getElementById("view-table")?.addEventListener("click", () => {
+        currentView = "table";
+        document.getElementById("view-table").classList.add("active");
+        document.getElementById("view-grid").classList.remove("active");
+        render();
+    });
+    document.getElementById("view-grid")?.addEventListener("click", () => {
+        currentView = "grid";
+        document.getElementById("view-grid").classList.add("active");
+        document.getElementById("view-table").classList.remove("active");
+        render();
+    });
+
+    function closeAllMenus() {
+        document.querySelectorAll(".action-menu.open").forEach(m => m.classList.remove("open"));
+        openMenuId = null;
+    }
+
+    document.addEventListener("click", (e) => {
+        const menuBtn = e.target.closest("[data-action-menu]");
+        if (menuBtn) {
+            e.stopPropagation();
+            const id = menuBtn.getAttribute("data-action-menu");
+            const menu = document.getElementById(`menu-${id}`);
+            const wasOpen = menu?.classList.contains("open");
+            closeAllMenus();
+            if (!wasOpen && menu) { menu.classList.add("open"); openMenuId = id; }
+            return;
+        }
+        const editBtn = e.target.closest("[data-edit]");
+        if (editBtn) { openEditModal(editBtn.getAttribute("data-edit")); closeAllMenus(); return; }
+        const activateBtn = e.target.closest("[data-activate]");
+        if (activateBtn) {
+            const id = Number(activateBtn.getAttribute("data-activate"));
+            const m = members.find(x => x.id === id);
+            if (m) { m.status = "active"; showToast(`“${m.name}” is now active`); render(); }
+            closeAllMenus(); return;
+        }
+        const deleteBtn = e.target.closest("[data-delete]");
+        if (deleteBtn) {
+            const id = Number(deleteBtn.getAttribute("data-delete"));
+            const m = members.find(x => x.id === id);
+            if (m && confirm(`Remove “${m.name}” from the team?`)) {
+                members = members.filter(x => x.id !== id);
+                showToast(`“${m.name}” removed`, "error");
+                render();
+            }
+            closeAllMenus(); return;
+        }
+        if (!e.target.closest(".action-menu")) closeAllMenus();
+    });
+
+    document.getElementById("team-export")?.addEventListener("click", () => {
+        const btn = document.getElementById("team-export");
+        const original = btn.textContent;
+        btn.textContent = "Exporting…";
+        btn.disabled = true;
+        const list = getFiltered();
+        const headers = ["Name", "Email", "Role", "Department", "Status", "Title", "Joined"];
+        const rows = list.map(m => [m.name, m.email, ROLE_LABEL[m.role], m.department, STATUS_LABEL[m.status], m.title || "", m.joined || ""]);
+        const csv = [headers, ...rows].map(r => r.map(c => `"${String(c).replace(/"/g, '""')}"`).join(",")).join("\n");
+        const blob = new Blob([csv], { type: "text/csv;charset=utf-8;" });
+        const url = URL.createObjectURL(blob);
+        const a = document.createElement("a");
+        a.href = url;
+        a.download = `veyra-team-${new Date().toISOString().slice(0, 10)}.csv`;
+        a.click();
+        URL.revokeObjectURL(url);
+        setTimeout(() => {
+            btn.textContent = "Exported ✓";
+            setTimeout(() => { btn.textContent = original; btn.disabled = false; }, 1200);
+        }, 400);
+        showToast("Team exported as CSV");
+    });
+
+    render();
+});
+</script>
+</body>
+</html>

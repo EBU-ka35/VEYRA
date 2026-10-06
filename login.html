@@ -1,0 +1,1019 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="Sign in to your VEYRA business operations and analytics account.">
+    <meta name="theme-color" content="#07111f">
+    <title>Login | VEYRA</title>
+
+    <style>
+        :root {
+            --bg-primary: #07111f;
+            --bg-secondary: #0a1626;
+            --bg-tertiary: #0d1b2d;
+            --surface: #0f1d30;
+            --border: rgba(255, 255, 255, 0.08);
+            --border-light: rgba(255, 255, 255, 0.12);
+            --text-primary: #f5f7fb;
+            --text-secondary: #a9b5c7;
+            --text-muted: #718096;
+            --accent: #5b8cff;
+            --accent-hover: #719bff;
+            --success: #35d07f;
+            --danger: #ff6b6b;
+            --radius-md: 12px;
+            --radius-lg: 16px;
+            --radius-xl: 24px;
+            --shadow-lg: 0 30px 80px rgba(0, 0, 0, 0.38);
+            --transition: 180ms ease;
+        }
+
+        *, *::before, *::after {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        html {
+            scroll-behavior: smooth;
+        }
+
+        body {
+            min-height: 100vh;
+            background:
+                radial-gradient(circle at 50% -20%, rgba(91, 140, 255, 0.12), transparent 45%),
+                radial-gradient(circle at 90% 80%, rgba(91, 140, 255, 0.05), transparent 30%),
+                var(--bg-primary);
+            color: var(--text-primary);
+            font-family: Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+            line-height: 1.6;
+            overflow-x: hidden;
+        }
+
+        a {
+            color: inherit;
+            text-decoration: none;
+        }
+
+        button, input {
+            font: inherit;
+        }
+
+        button {
+            border: 0;
+            background: none;
+            cursor: pointer;
+            color: inherit;
+        }
+
+        ::selection {
+            background: rgba(91, 140, 255, 0.35);
+            color: #ffffff;
+        }
+
+        :focus-visible {
+            outline: 2px solid var(--accent);
+            outline-offset: 3px;
+        }
+
+        /* Layout */
+        .auth-page {
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 32px 20px;
+        }
+
+        .auth-container {
+            width: 100%;
+            max-width: 440px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 28px;
+        }
+
+        /* Brand */
+        .auth-brand {
+            text-align: center;
+        }
+
+        .logo {
+            display: inline-flex;
+            align-items: center;
+            gap: 10px;
+            font-size: 22px;
+            font-weight: 850;
+            letter-spacing: 0.15em;
+            transition: opacity var(--transition);
+        }
+
+        .logo:hover {
+            opacity: 0.85;
+        }
+
+        .logo-mark {
+            width: 36px;
+            height: 36px;
+            display: grid;
+            place-items: center;
+            border-radius: 10px;
+            background: linear-gradient(135deg, #5b8cff, #7fa3ff);
+            color: white;
+            font-size: 14px;
+            font-weight: 900;
+            box-shadow: 0 8px 24px rgba(91, 140, 255, 0.3);
+        }
+
+        /* Card */
+        .auth-card {
+            width: 100%;
+            padding: 36px 32px;
+            background: linear-gradient(145deg, rgba(15, 29, 48, 0.98), rgba(9, 18, 31, 0.98));
+            border: 1px solid var(--border-light);
+            border-radius: var(--radius-xl);
+            box-shadow: var(--shadow-lg);
+        }
+
+        @media (max-width: 480px) {
+            .auth-card {
+                padding: 28px 20px;
+            }
+        }
+
+        .auth-header {
+            margin-bottom: 28px;
+            text-align: center;
+        }
+
+        .section-label {
+            display: block;
+            color: var(--accent-hover);
+            font-size: 11px;
+            font-weight: 800;
+            letter-spacing: 0.14em;
+            text-transform: uppercase;
+            margin-bottom: 10px;
+        }
+
+        .auth-header h1 {
+            font-size: clamp(24px, 4vw, 28px);
+            font-weight: 800;
+            letter-spacing: -0.03em;
+            line-height: 1.2;
+            margin-bottom: 8px;
+        }
+
+        .auth-header p {
+            color: var(--text-secondary);
+            font-size: 14px;
+            line-height: 1.7;
+            max-width: 320px;
+            margin: 0 auto;
+        }
+
+        /* Form */
+        .auth-form {
+            display: flex;
+            flex-direction: column;
+            gap: 18px;
+        }
+
+        .form-group {
+            display: flex;
+            flex-direction: column;
+            gap: 6px;
+        }
+
+        .form-group label {
+            color: var(--text-secondary);
+            font-size: 12px;
+            font-weight: 650;
+        }
+
+        .form-group input {
+            width: 100%;
+            height: 48px;
+            padding: 0 14px;
+            background: rgba(255, 255, 255, 0.04);
+            border: 1px solid var(--border);
+            border-radius: 10px;
+            color: var(--text-primary);
+            font-size: 14px;
+            outline: none;
+            transition: border-color var(--transition), background var(--transition), box-shadow var(--transition);
+        }
+
+        .form-group input::placeholder {
+            color: var(--text-muted);
+        }
+
+        .form-group input:focus {
+            border-color: rgba(91, 140, 255, 0.5);
+            background: rgba(91, 140, 255, 0.05);
+            box-shadow: 0 0 0 3px rgba(91, 140, 255, 0.12);
+        }
+
+        .form-group input.error {
+            border-color: rgba(255, 107, 107, 0.5);
+            background: rgba(255, 107, 107, 0.05);
+        }
+
+        .form-group input.error:focus {
+            box-shadow: 0 0 0 3px rgba(255, 107, 107, 0.12);
+        }
+
+        .form-error {
+            color: var(--danger);
+            font-size: 12px;
+            font-weight: 600;
+            min-height: 0;
+            display: none;
+        }
+
+        .form-error.visible {
+            display: block;
+        }
+
+        /* Password row */
+        .password-label {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 12px;
+        }
+
+        .password-label a {
+            color: var(--accent-hover);
+            font-size: 12px;
+            font-weight: 650;
+            transition: color var(--transition);
+        }
+
+        .password-label a:hover {
+            color: #ffffff;
+        }
+
+        .password-wrapper {
+            position: relative;
+            display: flex;
+            align-items: center;
+        }
+
+        .password-wrapper input {
+            padding-right: 64px;
+        }
+
+        .password-toggle {
+            position: absolute;
+            right: 6px;
+            height: 36px;
+            padding: 0 12px;
+            border-radius: 8px;
+            color: var(--text-muted);
+            font-size: 12px;
+            font-weight: 700;
+            transition: color var(--transition), background var(--transition);
+        }
+
+        .password-toggle:hover {
+            color: var(--text-primary);
+            background: rgba(255, 255, 255, 0.05);
+        }
+
+        /* Remember */
+        .remember-row {
+            display: flex;
+            align-items: center;
+        }
+
+        .checkbox-label {
+            display: inline-flex;
+            align-items: center;
+            gap: 10px;
+            cursor: pointer;
+            color: var(--text-secondary);
+            font-size: 13px;
+            font-weight: 600;
+            user-select: none;
+        }
+
+        .checkbox-label input[type="checkbox"] {
+            appearance: none;
+            width: 18px;
+            height: 18px;
+            border: 1.5px solid var(--border-light);
+            border-radius: 5px;
+            background: rgba(255, 255, 255, 0.03);
+            cursor: pointer;
+            position: relative;
+            flex-shrink: 0;
+            transition: border-color var(--transition), background var(--transition);
+        }
+
+        .checkbox-label input[type="checkbox"]:checked {
+            background: linear-gradient(135deg, #5b8cff, #4778ea);
+            border-color: transparent;
+        }
+
+        .checkbox-label input[type="checkbox"]:checked::after {
+            content: "✓";
+            position: absolute;
+            inset: 0;
+            display: grid;
+            place-items: center;
+            color: #fff;
+            font-size: 11px;
+            font-weight: 800;
+        }
+
+        .checkbox-label input[type="checkbox"]:focus-visible {
+            outline: 2px solid var(--accent);
+            outline-offset: 2px;
+        }
+
+        /* Submit */
+        .btn {
+            min-height: 48px;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            padding: 0 24px;
+            border-radius: 10px;
+            font-size: 14px;
+            font-weight: 700;
+            transition: transform var(--transition), background var(--transition), box-shadow var(--transition), opacity var(--transition);
+            touch-action: manipulation;
+        }
+
+        .btn:hover:not(:disabled) {
+            transform: translateY(-1px);
+        }
+
+        .btn:disabled {
+            opacity: 0.7;
+            cursor: not-allowed;
+        }
+
+        .btn-primary {
+            color: #ffffff;
+            background: linear-gradient(135deg, #5b8cff, #4778ea);
+            box-shadow: 0 10px 24px rgba(91, 140, 255, 0.22);
+        }
+
+        .btn-primary:hover:not(:disabled) {
+            background: linear-gradient(135deg, #6b98ff, #527ff0);
+            box-shadow: 0 14px 30px rgba(91, 140, 255, 0.3);
+        }
+
+        .auth-submit {
+            width: 100%;
+            margin-top: 4px;
+        }
+
+        .btn-spinner {
+            width: 18px;
+            height: 18px;
+            border: 2px solid rgba(255, 255, 255, 0.3);
+            border-top-color: #fff;
+            border-radius: 50%;
+            animation: spin 0.7s linear infinite;
+            display: none;
+        }
+
+        .btn.loading .btn-spinner {
+            display: block;
+        }
+
+        .btn.loading .btn-text {
+            opacity: 0.85;
+        }
+
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+
+        /* Status message */
+        .form-status {
+            text-align: center;
+            font-size: 13px;
+            font-weight: 600;
+            min-height: 20px;
+            border-radius: 8px;
+            padding: 0;
+            transition: padding var(--transition), background var(--transition);
+        }
+
+        .form-status.error {
+            color: var(--danger);
+            background: rgba(255, 107, 107, 0.1);
+            border: 1px solid rgba(255, 107, 107, 0.2);
+            padding: 10px 14px;
+        }
+
+        .form-status.success {
+            color: var(--success);
+            background: rgba(53, 208, 127, 0.1);
+            border: 1px solid rgba(53, 208, 127, 0.2);
+            padding: 10px 14px;
+        }
+
+        /* Divider */
+        .auth-divider {
+            display: flex;
+            align-items: center;
+            gap: 14px;
+            margin: 4px 0;
+            color: var(--text-muted);
+            font-size: 11px;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.08em;
+        }
+
+        .auth-divider::before,
+        .auth-divider::after {
+            content: "";
+            flex: 1;
+            height: 1px;
+            background: var(--border);
+        }
+
+        /* Social (demo) */
+        .social-buttons {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 10px;
+        }
+
+        .social-btn {
+            min-height: 44px;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            padding: 0 14px;
+            border-radius: 10px;
+            background: rgba(255, 255, 255, 0.04);
+            border: 1px solid var(--border);
+            color: var(--text-secondary);
+            font-size: 13px;
+            font-weight: 650;
+            transition: background var(--transition), border-color var(--transition), color var(--transition);
+        }
+
+        .social-btn:hover {
+            background: rgba(255, 255, 255, 0.07);
+            border-color: var(--border-light);
+            color: var(--text-primary);
+        }
+
+        /* Footer */
+        .auth-footer {
+            margin-top: 24px;
+            padding-top: 20px;
+            border-top: 1px solid var(--border);
+            text-align: center;
+        }
+
+        .auth-footer p {
+            color: var(--text-muted);
+            font-size: 13px;
+        }
+
+        .auth-footer a {
+            color: var(--accent-hover);
+            font-weight: 700;
+            transition: color var(--transition);
+        }
+
+        .auth-footer a:hover {
+            color: #ffffff;
+        }
+
+        .back-link {
+            color: var(--text-muted);
+            font-size: 13px;
+            font-weight: 600;
+            transition: color var(--transition);
+        }
+
+        .back-link:hover {
+            color: var(--text-primary);
+        }
+
+        /* Demo hint */
+        .demo-hint {
+            margin-top: 16px;
+            padding: 12px 14px;
+            background: rgba(91, 140, 255, 0.08);
+            border: 1px solid rgba(91, 140, 255, 0.15);
+            border-radius: 10px;
+            text-align: center;
+        }
+
+        .demo-hint p {
+            color: var(--text-secondary);
+            font-size: 12px;
+            line-height: 1.5;
+        }
+
+        .demo-hint strong {
+            color: var(--accent-hover);
+            font-weight: 700;
+        }
+
+        @media (prefers-reduced-motion: reduce) {
+            *, *::before, *::after {
+                animation-duration: 0.01ms !important;
+                animation-iteration-count: 1 !important;
+                transition-duration: 0.01ms !important;
+            }
+        }
+    </style>
+</head>
+<body class="auth-page">
+
+<main class="auth-container">
+
+    <div class="auth-brand">
+        <a href="index.html" class="logo" aria-label="VEYRA home">
+            <span class="logo-mark">V</span>
+            VEYRA
+        </a>
+    </div>
+
+    <section class="auth-card" aria-labelledby="login-title">
+
+        <div class="auth-header">
+            <span class="section-label">Welcome Back</span>
+            <h1 id="login-title">Sign in to VEYRA</h1>
+            <p>Access your business dashboard and continue managing your operations.</p>
+        </div>
+
+        <form class="auth-form" id="login-form" novalidate>
+
+            <div class="form-group">
+                <label for="email">Email address</label>
+                <input
+                    type="email"
+                    id="email"
+                    name="email"
+                    placeholder="you@example.com"
+                    autocomplete="email"
+                    required
+                    aria-describedby="email-error"
+                >
+                <small class="form-error" id="email-error" role="alert"></small>
+            </div>
+
+            <div class="form-group">
+                <div class="password-label">
+                    <label for="password">Password</label>
+                    <a href="forgotpassword.html" id="forgot-password">Forgot password?</a>
+                </div>
+                <div class="password-wrapper">
+                    <input
+                        type="password"
+                        id="password"
+                        name="password"
+                        placeholder="Enter your password"
+                        autocomplete="current-password"
+                        required
+                        aria-describedby="password-error"
+                    >
+                    <button
+                        type="button"
+                        class="password-toggle"
+                        id="password-toggle"
+                        aria-label="Show password"
+                    >Show</button>
+                </div>
+                <small class="form-error" id="password-error" role="alert"></small>
+            </div>
+
+            <div class="remember-row">
+                <label class="checkbox-label">
+                    <input type="checkbox" id="remember" name="remember">
+                    <span>Remember me</span>
+                </label>
+            </div>
+
+            <button type="submit" class="btn btn-primary auth-submit" id="submit-btn">
+                <span class="btn-spinner" aria-hidden="true"></span>
+                <span class="btn-text">Sign In</span>
+            </button>
+
+            <div class="form-status" id="form-status" role="status" aria-live="polite"></div>
+
+            <div class="auth-divider">or continue with</div>
+
+            <div class="social-buttons">
+                <button type="button" class="social-btn" id="google-btn" aria-label="Sign in with Google">
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
+                        <path d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92a5.06 5.06 0 01-2.2 3.32v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.1z"/>
+                        <path d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z"/>
+                        <path d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l2.85-2.22.81-.62z"/>
+                        <path d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z"/>
+                    </svg>
+                    Google
+                </button>
+                <button type="button" class="social-btn" id="github-btn" aria-label="Sign in with GitHub">
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
+                        <path d="M12 0C5.37 0 0 5.37 0 12c0 5.31 3.435 9.795 8.205 11.385.6.105.825-.255.825-.57 0-.285-.015-1.23-.015-2.235-3.015.555-3.795-.735-4.035-1.41-.135-.345-.72-1.41-1.23-1.695-.42-.225-1.02-.78-.015-.795.945-.015 1.62.87 1.845 1.23 1.08 1.815 2.805 1.305 3.495.99.105-.78.42-1.305.765-1.605-2.67-.3-5.46-1.335-5.46-5.925 0-1.305.465-2.385 1.23-3.225-.12-.3-.54-1.53.12-3.18 0 0 1.005-.315 3.3 1.23.96-.27 1.98-.405 3-.405s2.04.135 3 .405c2.295-1.56 3.3-1.23 3.3-1.23.66 1.65.24 2.88.12 3.18.765.84 1.23 1.905 1.23 3.225 0 4.605-2.805 5.625-5.475 5.925.435.375.81 1.095.81 2.22 0 1.605-.015 2.895-.015 3.3 0 .315.225.69.825.57A12.02 12.02 0 0024 12c0-6.63-5.37-12-12-12z"/>
+                    </svg>
+                    GitHub
+                </button>
+            </div>
+
+        </form>
+
+        <div class="demo-hint">
+            <p>Use the account you created on the <strong>Register</strong> page.</p>
+        </div>
+
+        <div class="auth-footer">
+            <p>
+                Don't have an account?
+                <a href="register.html">Create one</a>
+            </p>
+        </div>
+
+    </section>
+
+    <a href="index.html" class="back-link">← Back to VEYRA</a>
+
+</main>
+
+<script>
+
+document.addEventListener("DOMContentLoaded", () => {
+
+    const form = document.getElementById("login-form");
+    const emailInput = document.getElementById("email");
+    const passwordInput = document.getElementById("password");
+    const passwordToggle = document.getElementById("password-toggle");
+    const rememberCheck = document.getElementById("remember");
+    const submitBtn = document.getElementById("submit-btn");
+    const formStatus = document.getElementById("form-status");
+
+    /*
+    ============================================================
+    REMEMBERED EMAIL
+    ============================================================
+    */
+
+    try {
+        const savedEmail =
+            localStorage.getItem("veyra_remember_email");
+
+        if (savedEmail && emailInput) {
+            emailInput.value = savedEmail;
+
+            if (rememberCheck) {
+                rememberCheck.checked = true;
+            }
+        }
+    } catch (_) {}
+
+
+    /*
+    ============================================================
+    PASSWORD SHOW / HIDE
+    ============================================================
+    */
+
+    if (passwordToggle && passwordInput) {
+
+        passwordToggle.addEventListener("click", () => {
+
+            const isPassword =
+                passwordInput.type === "password";
+
+            passwordInput.type =
+                isPassword ? "text" : "password";
+
+            passwordToggle.setAttribute(
+                "aria-label",
+                isPassword
+                    ? "Hide password"
+                    : "Show password"
+            );
+
+            passwordToggle.setAttribute(
+                "title",
+                isPassword
+                    ? "Hide password"
+                    : "Show password"
+            );
+
+        });
+
+    }
+
+
+    /*
+    ============================================================
+    FORM SUBMISSION
+    ============================================================
+    */
+
+    if (form) {
+
+        form.addEventListener("submit", async (event) => {
+
+            event.preventDefault();
+
+            const email =
+                emailInput.value.trim().toLowerCase();
+
+            const password =
+                passwordInput.value;
+
+            /*
+            --------------------------------------------------------
+            FRONTEND VALIDATION
+            --------------------------------------------------------
+            */
+
+            if (!email || !password) {
+
+                showStatus(
+                    "Please enter your email and password.",
+                    "error"
+                );
+
+                return;
+            }
+
+            const emailRegex =
+                /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+
+            if (!emailRegex.test(email)) {
+
+                showStatus(
+                    "Please enter a valid email address.",
+                    "error"
+                );
+
+                return;
+            }
+
+            /*
+            --------------------------------------------------------
+            LOADING STATE
+            --------------------------------------------------------
+            */
+
+            setLoading(true);
+
+            showStatus(
+                "Signing you in...",
+                "loading"
+            );
+
+            try {
+
+                /*
+                ----------------------------------------------------
+                SEND LOGIN REQUEST TO VEYRA BACKEND
+                ----------------------------------------------------
+                */
+
+                const response = await fetch(
+                    "http://localhost:5000/api/auth/login",
+                    {
+                        method: "POST",
+
+                        headers: {
+                            "Content-Type":
+                                "application/json"
+                        },
+
+                        body: JSON.stringify({
+                            email: email,
+                            password: password
+                        })
+                    }
+                );
+
+                /*
+                ----------------------------------------------------
+                READ SERVER RESPONSE
+                ----------------------------------------------------
+                */
+
+                let data = {};
+
+                try {
+                    data = await response.json();
+                } catch (_) {
+                    data = {};
+                }
+
+                /*
+                ----------------------------------------------------
+                HANDLE LOGIN FAILURE
+                ----------------------------------------------------
+                */
+
+                if (!response.ok) {
+
+                    showStatus(
+                        data.message ||
+                        "Unable to login. Please check your credentials.",
+                        "error"
+                    );
+
+                    setLoading(false);
+
+                    return;
+                }
+
+                /*
+                ----------------------------------------------------
+                SAVE REMEMBERED EMAIL
+                ----------------------------------------------------
+                */
+
+                try {
+
+                    if (
+                        rememberCheck &&
+                        rememberCheck.checked
+                    ) {
+
+                        localStorage.setItem(
+                            "veyra_remember_email",
+                            email
+                        );
+
+                    } else {
+
+                        localStorage.removeItem(
+                            "veyra_remember_email"
+                        );
+
+                    }
+
+                } catch (_) {}
+
+
+                /*
+                ====================================================
+                IMPORTANT
+                ====================================================
+                
+                SAVE AUTHENTICATION STATE
+                ====================================================
+                */
+
+                sessionStorage.setItem(
+                    "veyra_auth",
+                    "1"
+                );
+
+
+                /*
+                ====================================================
+                SAVE JWT TOKEN
+                ====================================================
+                
+                THIS IS THE IMPORTANT FIX.
+                
+                The Projects API and other protected APIs
+                will use this token.
+                ====================================================
+                */
+
+                sessionStorage.setItem(
+                    "veyra_token",
+                    data.token
+                );
+
+
+                /*
+                ====================================================
+                SAVE USER INFORMATION
+                ====================================================
+                */
+
+                sessionStorage.setItem(
+                    "veyra_user",
+                    JSON.stringify(
+                        data.user || {}
+                    )
+                );
+
+
+                /*
+                ====================================================
+                SUCCESS MESSAGE
+                ====================================================
+                */
+
+                showStatus(
+                    "Login successful. Redirecting...",
+                    "success"
+                );
+
+
+                /*
+                ====================================================
+                REDIRECT TO DASHBOARD
+                ====================================================
+                */
+
+                setTimeout(() => {
+
+                    window.location.href =
+                        "dashboard.html";
+
+                }, 500);
+
+
+            } catch (error) {
+
+                console.error(
+                    "Login error:",
+                    error
+                );
+
+                showStatus(
+                    "Unable to connect to the VEYRA server. Please make sure the backend is running.",
+                    "error"
+                );
+
+                setLoading(false);
+
+            }
+
+        });
+
+    }
+
+
+    /*
+    ============================================================
+    LOADING BUTTON STATE
+    ============================================================
+    */
+
+    function setLoading(isLoading) {
+
+        if (!submitBtn) {
+            return;
+        }
+
+        if (isLoading) {
+
+            submitBtn.disabled = true;
+
+            submitBtn.dataset.originalText =
+                submitBtn.textContent;
+
+            submitBtn.textContent =
+                "Signing in...";
+
+        } else {
+
+            submitBtn.disabled = false;
+
+            submitBtn.textContent =
+                submitBtn.dataset.originalText ||
+                "Sign In";
+
+        }
+
+    }
+
+
+    /*
+    ============================================================
+    STATUS MESSAGE
+    ============================================================
+    */
+
+    function showStatus(message, type) {
+
+        if (!formStatus) {
+            return;
+        }
+
+        formStatus.textContent = message;
+
+        formStatus.className =
+            "form-status " + type;
+
+        formStatus.style.display = "block";
+
+    }
+
+});
+</script>
+
+</body>
+</html>
