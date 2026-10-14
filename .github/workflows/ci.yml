@@ -41,8 +41,10 @@ jobs:
           cache: npm
           cache-dependency-path: backend/package-lock.json
 
+      
       - name: Install dependencies
-        run: npm ci
+        run: npm install --include=optional
+
 
       - name: Wait for MySQL
         run: |
