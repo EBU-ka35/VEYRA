@@ -1,0 +1,69 @@
+
+name: VEYRA CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+
+jobs:
+  test:
+    name: Backend Tests
+    runs-on: ubuntu-latest
+
+    services:
+      mysql:
+        image: mysql:8.4
+        env:
+          MYSQL_ROOT_PASSWORD: ci-test-password
+          MYSQL_DATABASE: veyra
+        ports:
+          - 3306:3306
+        options: >-
+          --health-cmd="mysqladmin ping -h 127.0.0.1 -pci-test-password"
+          --health-interval=10s
+          --health-timeout=5s
+          --health-retries=10
+
+    defaults:
+      run:
+        working-directory: backend
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+          cache-dependency-path: backend/package-lock.json
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Wait for MySQL
+        run: |
+          for i in {1..30}; do
+            node -e "require('mysql2/promise').createConnection({host:'127.0.0.1',user:'root',password:'ci-test-password',database:'veyra'}).then(c=>c.end()).then(()=>process.exit(0)).catch(()=>process.exit(1))" && exit 0
+            sleep 2
+          done
+          echo "MySQL did not become ready"
+          exit 1
+
+      - name: Create database tables
+        run: |
+          mysql -h 127.0.0.1 -uroot -pci-test-password veyra < ../docker/mysql/init/01-schema.sql
+
+      - name: Run automated tests
+        run: npm test -- --runInBand
+        env:
+          PORT: 5000
+          JWT_SECRET: ci-test-secret-not-for-production
+          DB_HOST: 127.0.0.1
+          DB_USER: root
+          DB_PASSWORD: ci-test-password
+          DB_NAME: veyra
+          DB_PORT: 3306
